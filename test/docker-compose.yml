@@ -1,0 +1,87 @@
+version: "3"
+
+services:
+  smb:
+    image: dperson/samba
+    # NOTE: ghcr.io/servercontainers/samba 使用不同的 env schema (ACCOUNT_username/SAMBA_VOLUME_CONFIG_*),
+    # crazymax/samba 需要 YAML 配置文件 — 都与现有测试常量 (USER=fregie;password, SHARE=photos;...) 不兼容。
+    # 保持 dperson/samba 并添加 healthcheck。
+    environment:
+      - USER=fregie;password
+      - SHARE=photos;/tmp/photos;yes;no;no;fregie;fregie;fregie
+    privileged: true
+    ports:
+      - "139:139"
+      - "445:445"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "smbclient -L //127.0.0.1 -U fregie%password 2>/dev/null | grep -q photos"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  webdav:
+    image: bytemark/webdav
+    # NOTE: hacdias/webdav 需要 YAML 配置文件且仅支持 Basic auth — 与现有 Digest auth 测试常量不兼容。
+    # 保持 bytemark/webdav 并添加 healthcheck。
+    ports:
+      - "8080:80"
+    environment:
+      AUTH_TYPE: Digest
+      USERNAME: fregie
+      PASSWORD: password
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "nc -w 2 localhost 80 < /dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  nfs:
+    image: erichough/nfs-server
+    privileged: true
+    cap_add:
+      - SYS_ADMIN
+      - SETPCAP
+    volumes:
+      - ./nfs/exports:/etc/exports:ro
+      - nfs:/nfs
+    networks:
+      backend:
+        ipv4_address: 192.168.23.10
+    healthcheck:
+      test: ["CMD-SHELL", "showmount -e localhost 2>/dev/null | grep -q '/nfs' && rpcinfo -p localhost 2>/dev/null | grep -q nfs"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  server:
+    build:
+      context: ..
+      dockerfile: server/Dockerfile
+    ports:
+      - "50051:50051"
+      - "8000:8000"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'timeout 3 bash -c \"echo >/dev/tcp/localhost/50051\" 2>/dev/null' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+volumes:
+  nfs:
+
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.23.0/24

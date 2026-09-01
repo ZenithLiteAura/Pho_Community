@@ -1,0 +1,179 @@
+syntax = "proto3";
+package img_syncer;
+
+option go_package = "github.com/fregie/img_syncer/proto";
+
+service ImgSyncer {
+  rpc SetDirectoryType (SetDirectoryTypeRequest) returns (SetDirectoryTypeResponse) {}
+  rpc ListByDate (ListByDateRequest) returns (ListByDateResponse) {}
+  rpc Delete (DeleteRequest) returns (DeleteResponse) {}
+  rpc FilterNotUploaded (stream FilterNotUploadedRequest) returns (stream FilterNotUploadedResponse) {}
+  // SAMBA Drive
+  rpc SetDriveSMB (SetDriveSMBRequest) returns (SetDriveSMBResponse) {}
+  rpc ListDriveSMBShares (ListDriveSMBSharesRequest) returns (ListDriveSMBSharesResponse) {}
+  rpc ListDriveSMBDir (ListDriveSMBDirRequest) returns (ListDriveSMBDirResponse) {}
+  rpc SetDriveSMBShare (SetDriveSMBShareRequest) returns (SetDriveSMBShareResponse) {}
+  // Webdav Drive
+  rpc SetDriveWebdav (SetDriveWebdavRequest) returns (SetDriveWebdavResponse) {}
+  rpc ListDriveWebdavDir (ListDriveWebdavDirRequest) returns (ListDriveWebdavDirResponse) {}
+  // Webdav Drive Dual (primary + backup, 写失败自动回退)
+  rpc SetDriveWebdavDual (SetDriveWebdavDualRequest) returns (SetDriveWebdavResponse) {}
+  // NFS Drive
+  rpc SetDriveNFS (SetDriveNFSRequest) returns (SetDriveNFSResponse) {}
+  rpc ListDriveNFSDir (ListDriveNFSDirRequest) returns (ListDriveNFSDirResponse) {}
+  // Ping
+  rpc Ping (PingRequest) returns (PingResponse) {}
+}
+
+// enum ContentType {
+//   IMAGE_JPEG = 0;
+//   IMAGE_PNG = 1;
+//   IMAGE_GIF = 2;
+// }
+
+enum DirectoryType {
+  DIRECTORY_TYPE_01 = 0; // YYYY/MM/DD/photo_name.jpg
+  DIRECTORY_TYPE_02 = 1; // YYYYMMDD/photo_name.jpg
+}
+
+message SetDirectoryTypeRequest {
+  DirectoryType directoryType = 1;
+}
+message SetDirectoryTypeResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message FileInfo {
+  string path = 1;
+  int64 size = 2;
+  bool isLivePhoto = 3;
+}
+
+message ListByDateRequest {
+  string date = 1; // YYYY:MM:DD
+  int32 offset = 2;
+  int32 maxReturn = 3;
+}
+message ListByDateResponse {
+  bool success = 1;
+  string message = 2;
+  repeated FileInfo infos = 3;
+}
+
+message DeleteRequest {
+  repeated string paths = 1;
+}
+message DeleteResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message FilterNotUploadedRequestInfo {
+  string name = 1;
+  string date = 2;
+  string id = 3;
+}
+
+message FilterNotUploadedRequest {
+  repeated FilterNotUploadedRequestInfo photos = 1;
+  bool isFinished = 2;
+}
+message FilterNotUploadedResponse {
+  bool success = 1;
+  string message = 2;
+  repeated string notUploaedIDs = 3;
+  repeated string uploadedIDs = 4;
+  bool isFinished = 5;
+  repeated string invalid_ids = 6;
+  repeated string notUploadedIDs = 7;
+}
+
+message SetDriveSMBRequest {
+  string addr = 1;
+  string username = 2;
+  string password = 3;
+  string share = 4;
+  string root = 5;
+}
+message SetDriveSMBResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListDriveSMBSharesRequest {}
+message ListDriveSMBSharesResponse {
+  bool success = 1;
+  string message = 2;
+  repeated string shares = 3;
+}
+
+message ListDriveSMBDirRequest {
+  string share = 1;
+  string dir = 2;
+}
+message ListDriveSMBDirResponse {
+  bool success = 1;
+  string message = 2;
+  repeated string dirs = 3;
+}
+
+message SetDriveSMBShareRequest {
+  string share = 1;
+  string root = 2;
+}
+message SetDriveSMBShareResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message SetDriveWebdavRequest {
+  string addr = 1;
+  string username = 2;
+  string password = 3;
+  string root = 4;
+  bool insecure = 5;
+}
+message SetDriveWebdavResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message SetDriveWebdavDualRequest {
+  SetDriveWebdavRequest primary = 1;
+  SetDriveWebdavRequest backup = 2; // 可选：备份目标，写失败自动回退
+}
+
+message ListDriveWebdavDirRequest {
+  string dir = 1;
+}
+message ListDriveWebdavDirResponse {
+  bool success = 1;
+  string message = 2;
+  repeated string dirs = 3;
+}
+
+message SetDriveNFSRequest {
+  string addr = 1;
+  string root = 2;
+}
+message SetDriveNFSResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListDriveNFSDirRequest {
+  string dir = 1;
+}
+message ListDriveNFSDirResponse {
+  bool success = 1;
+  string message = 2;
+  repeated string dirs = 3;
+}
+
+message PingRequest {}
+
+message PingResponse {
+  int64 server_start_time = 1;
+  int64 uptime_seconds = 2;
+}
