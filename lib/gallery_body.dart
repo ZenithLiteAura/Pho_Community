@@ -52,7 +52,9 @@ class LocateInfo {
 
 class GalleryBodyState extends State<GalleryBody>
     with AutomaticKeepAliveClientMixin {
-  bool _showToTopBtn = false;
+  // v3.1: 滚动相关状态用 ValueNotifier，滚动时不触发全页 setState
+  final ValueNotifier<bool> _showToTopBtnNotifier = ValueNotifier(false);
+  final ValueNotifier<double> _locaterOffsetNotifier = ValueNotifier(0);
   @override
   bool get wantKeepAlive => true;
   final ScrollController _scrollController = ScrollController();
@@ -80,7 +82,7 @@ class GalleryBodyState extends State<GalleryBody>
   void initState() {
     super.initState();
     _useLocal = widget.useLocal;
-    // v3.1 优化：合并滚动监听，统一 debounce，避免每帧多次 setState
+    // v3.1 优化：滚动监听只更新 ValueNotifier，不触发全页 setState
     _scrollSubject.stream
         .debounceTime(const Duration(milliseconds: 16)) // ~60fps
         .listen((scrollPosition) {
@@ -88,10 +90,7 @@ class GalleryBodyState extends State<GalleryBody>
           _scrollController.position.maxScrollExtent - 4000) {
         // getPhotos();
       }
-      // 限制 setState 频率
-      setState(() {
-        scrollOffset = scrollPosition;
-      });
+      scrollOffset = scrollPosition;
     });
     _scrollSubject.stream
         .debounceTime(const Duration(milliseconds: 16))
@@ -106,27 +105,21 @@ class GalleryBodyState extends State<GalleryBody>
       final paddingTop = MediaQuery.of(context).padding.top + 70;
       const paddingBottom = 130;
       final avaliabileHeight = totalHeight - paddingBottom - paddingTop;
-      if ((locaterOffset -
-                  (paddingTop +
-                      (scrollPosition / maxScrollOffset) * avaliabileHeight))
-              .abs() <
-          5) {
+      final target = paddingTop +
+          (scrollPosition / maxScrollOffset) * avaliabileHeight;
+      if ((_locaterOffsetNotifier.value - target).abs() < 5) {
         return;
       }
-      setState(() {
-        locaterOffset =
-            paddingTop + (scrollPosition / maxScrollOffset) * avaliabileHeight;
-      });
+      // 只更新 ValueNotifier，locater 用 ValueListenableBuilder 局部重建
+      _locaterOffsetNotifier.value = target;
     });
     _scrollController.addListener(() {
       _scrollSubject.add(_scrollController.position.pixels);
-      // v3.1 优化：只在这个阈值变化时才 setState
+      // v3.1 优化：阈值变化才更新 ValueNotifier，不 setState
       final offset = _scrollController.offset;
       final shouldShowBtn = offset > 1000;
-      if (shouldShowBtn != _showToTopBtn) {
-        setState(() {
-          _showToTopBtn = shouldShowBtn;
-        });
+      if (shouldShowBtn != _showToTopBtnNotifier.value) {
+        _showToTopBtnNotifier.value = shouldShowBtn;
       }
     });
     settingModel.addListener(_onSettingChanged);
@@ -149,16 +142,16 @@ class GalleryBodyState extends State<GalleryBody>
   void didChangeDependencies() {
     super.didChangeDependencies();
     final paddingTop = MediaQuery.of(context).padding.top + 70;
-    if (locaterOffset < paddingTop) {
-      setState(() {
-        locaterOffset = paddingTop;
-      });
+    if (_locaterOffsetNotifier.value < paddingTop) {
+      _locaterOffsetNotifier.value = paddingTop;
     }
   }
 
   @override
   void dispose() {
     settingModel.removeListener(_onSettingChanged);
+    _showToTopBtnNotifier.dispose();
+    _locaterOffsetNotifier.dispose();
     super.dispose();
     _scrollController.dispose();
     _scrollSubject.close();
@@ -785,13 +778,14 @@ class GalleryBodyState extends State<GalleryBody>
     });
     final perMonthHeight = avaliabileHeight / mouthLocList.length;
     return GestureDetector(
-      onVerticalDragStart: (details) => setState(() {
+      onVerticalDragStart: (details) {
         dragging = true;
-      }),
-      onVerticalDragEnd: (details) => setState(() {
+      },
+      onVerticalDragEnd: (details) {
         dragging = false;
-      }),
+      },
       onVerticalDragUpdate: (details) {
+        final locaterOffset = _locaterOffsetNotifier.value;
         final realOffset = locaterOffset - paddingTop;
         if (details.delta.dy < 0 && realOffset + details.delta.dy < 0) {
           return;
@@ -810,9 +804,8 @@ class GalleryBodyState extends State<GalleryBody>
               duration: const Duration(milliseconds: 50),
               curve: Curves.easeInOut);
         }
-        setState(() {
-          locaterOffset += details.delta.dy;
-        });
+        // v3.1: 更新 ValueNotifier，locater 局部重建，不触发全页 setState
+        _locaterOffsetNotifier.value = locaterOffset + details.delta.dy;
       },
       child: Container(
         height: 50,
@@ -848,17 +841,16 @@ class GalleryBodyState extends State<GalleryBody>
     _dateLocateMap = {};
     final all = _useLocal ? model.localAssets : model.remoteAssets;
     var children = <Widget>[];
-    
+
     // 3-column squircle grid with Fluid Horizon spacing
     final double gridSpacing = AppSpacing.sm; // 12px
-    final int gridColumns = 3;
+    final int gridColumns = columCount;
     double totalwidth;
     if (widget.width == null) {
       totalwidth = MediaQuery.of(context).size.width - (gridColumns + 1) * gridSpacing;
     } else {
       totalwidth = widget.width! - (gridColumns + 1) * gridSpacing;
     }
-    final totalHeight = MediaQuery.of(context).size.height;
     final imgWidth = (totalwidth - (gridColumns - 1) * gridSpacing) / gridColumns;
     final imgHeight = imgWidth; // Square thumbnails
 
@@ -994,12 +986,8 @@ class GalleryBodyState extends State<GalleryBody>
         }
         currentScrollOffset += 55;
       }
-      bool needLoadThumbnail = false;
-      if (currentScrollOffset > scrollOffset - (2 * totalHeight) &&
-          currentScrollOffset < scrollOffset + (3 * totalHeight)) {
-        needLoadThumbnail = true;
-        // v3.1: 缩略图异步加载但不再触发全局 setState，避免每张图加载完都重建全页
-      }
+      // v3.1.1: 缩略图由 _ThumbnailLoader 独立管理，滚动不触发全页 setState
+      final bool needLoadThumbnail = true;
       var child = GestureDetector(
           onTap: () async {
             if (stateModel.isSelectionMode) {
@@ -1362,6 +1350,7 @@ class GalleryBodyState extends State<GalleryBody>
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -1378,7 +1367,14 @@ class GalleryBodyState extends State<GalleryBody>
                 Consumer<AssetModel>(builder: contentBuilder),
               ]),
           if (!isDesktop())
-            Positioned(top: locaterOffset, right: 0, child: locater()),
+            ValueListenableBuilder<double>(
+              valueListenable: _locaterOffsetNotifier,
+              builder: (context, locaterOffset, _) => Positioned(
+                top: locaterOffset,
+                right: 0,
+                child: locater(),
+              ),
+            ),
           // 回到顶部按钮
           Positioned(
             bottom: 20,
@@ -1386,14 +1382,17 @@ class GalleryBodyState extends State<GalleryBody>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Offstage(
-                  offstage: !_showToTopBtn,
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 10),
-                    child: FloatingActionButton.small(
-                      onPressed: _scrollToTop,
-                      heroTag: 'gallery_body_${_useLocal}_toTop',
-                      child: const Icon(Icons.arrow_upward),
+                ValueListenableBuilder<bool>(
+                  valueListenable: _showToTopBtnNotifier,
+                  builder: (context, showBtn, _) => Offstage(
+                    offstage: !showBtn,
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 10),
+                      child: FloatingActionButton.small(
+                        onPressed: _scrollToTop,
+                        heroTag: 'gallery_body_${_useLocal}_toTop',
+                        child: const Icon(Icons.arrow_upward),
+                      ),
                     ),
                   ),
                 ),

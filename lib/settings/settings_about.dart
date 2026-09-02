@@ -51,7 +51,7 @@ class SettingsAboutPage extends StatelessWidget {
                   leading: const Icon(Icons.info_outline, size: 26),
                   title: Text(l10n.appVersion),
                   subtitle: Text(
-                    'Pho - 3.1',
+                    'Pho - 3.1.1',
                     style: TextStyle(color: colorScheme.primary),
                   ),
                 ),
