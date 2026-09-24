@@ -2,50 +2,46 @@
 <img src="assets/icon/pho_icon.png" width="150">
 </p>
 <h3 align="center">
-Pho - A serverless application for viewing and uploading photos
+Pho — a serverless photo browser and sync app
 </h3>
 <p align="center">
-  <img src="https://github.com/fregie/pho/actions/workflows/go_test.yml/badge.svg">
+  <img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License">
 </p>
 <p align="center">
   <a href="README.md">中文</a> | <a href="README_EN.md">English</a>
 </p>
 
-### Installation
-
-**Open Source Edition** (Android APK only):
-- [Download APK](https://github.com/fregie/pho/releases) — SMB / WebDAV / NFS only, no Pro features
-
-**Pro Edition** (all features, paid):
-- [App Store](https://apps.apple.com/cn/app/pho-%E5%90%8C%E6%AD%A5%E7%85%A7%E7%89%87%E5%88%B0nas-%E7%BD%91%E7%9B%98/id6451428709) — iOS, with AES encryption, parallel upload, filters, Baidu Netdisk, and more
-- [Google Play](https://play.google.com/store/apps/details?id=com.fregie.pho) — Android, with AES encryption, parallel upload, filters, Baidu Netdisk, and more
-
-> This open-source repo only provides APK downloads. iOS users should download the Pro edition from the App Store, and Android users from Google Play (free to try basic features, then purchase Pro).
-
-
 ### Introduction
-The primary objective of this application is to serve as a replacement for the native photo gallery application on smartphones. It also offers the capability to synchronize photos with online storage.  
-Pho is a simple app designed for viewing and synchronizing photos to cloud storage. It aims to provide an excellent user experience.
+
+Pho is meant to replace the built-in gallery on your phone: browse photos stored locally or on your network storage, and incrementally sync them to storage you own.
+
+There is no server, no database and no account. Photos are organized into date-based directories and live directly on your storage device — the app only reads and writes those directories, so you can always manage your photos without it.
+
+### Download
+
+See [Releases](https://github.com/ZenithLiteAura/Pho_Community/releases) for the Android APK.
 
 ### Features
-* Local photo browsing
-* Cloud photo browsing
-* Incremental photo synchronization to the cloud
-* Background periodic synchronization
-* No database, no server-side
-* Organizing cloud storage directory structure by date
 
-### Supported Cloud Storage
-- [x] Samba
-- [x] Webdav
+- **Local gallery**: browse grouped by date, adjustable grid columns, pinch-to-zoom, video playback and Live Photos
+- **Cloud gallery**: browse photos on your network storage directly, without downloading the whole library first
+- **Incremental sync**: three-way deduplication by content hash, stored filename and local path — nothing is uploaded twice
+- **Parallel upload**: 1–10 concurrent uploads, configurable (Settings → Sync → Performance)
+- **Storage as the database**: date-based directory layout, readable by any other tool, no lock-in
+- **Thumbnail cache**: a `.thumbnail` directory mirroring the source tree keeps browsing fast
+- **Look and feel**: MIUIX / Material 3 themes, dark mode, Dock style and opacity, gallery column count
+- **Logs and diagnostics**: log collection, level filtering and export to help trace sync issues
+- **Platforms**: Android / iOS / macOS
+
+### Supported storage
+
+- [x] Samba (SMB)
+- [x] WebDAV (primary + backup target)
 - [x] NFS
-- [ ] Alibaba Cloud Drive
-- [ ] baidu netdisk
-- [ ] oneDrive
-- [ ] google drive
-- [ ] google photo
+- [ ] OneDrive / Google Drive / Alibaba Cloud Drive
 
 ### Screenshots
+
 <p align="left">
 <img src="assets/screenshot/screenshot_local.png" width="220" alt="Local Gallery">
 <img src="assets/screenshot/screenshot_cloud.png" width="220" alt="Cloud Gallery">
@@ -53,28 +49,10 @@ Pho is a simple app designed for viewing and synchronizing photos to cloud stora
 <img src="assets/screenshot/screenshot_view.png" width="220" alt="Photo Viewer">
 </p>
 
-### Roadmap
-- [x] Support zooming in/out of images
-- [x] Support uploading/browsing videos
-- [x] Support NFS
-- [x] Support Baidu net disk
-- [x] Support iOS
-- [ ] Support web version
-- [x] Add Chinese
+### File storage layout
 
-### Contribute
-Thank you all for your positive feedback.
+Source files are stored by filename under date-based directories. Thumbnails live in a `.thumbnail` directory at the root, mirroring the same structure. You are free to use the uploaded photos in any other way — no dependency on this app.
 
-There have been quite a few people who have provided requirements for this project, but as an individual, my resources are limited. If you are interested, you are welcome to join.
-
-You can communicate by replying in the issue section and help in developing some features by submitting your pull request.
-
-### File Storage Logic
-The application stores files based on a straightforward principle of utilizing the time as the directory structure, and the source file name as the filename for storage. A .thumbnail directory is created in the root directory to store the generated thumbnails, and the directory structure for these thumbnails aligns with that of the source files.
-
-You can access and utilize your backed-up photos in any other manner at any time, without dependence on this application.
-
-Directory Structure Diagram:
 ```bash
 ├── 2022
 │   ├── 07
@@ -93,21 +71,66 @@ Directory Structure Diagram:
 │           ├── 20230103_124634.JPG
 │           └── 20230103_124918.DNG
 └── .thumbnail
-     └── 2022
-         └── 07
-             ├── 02
-             │   ├── 20220702_100940.JPG
-             │   ├── 20220702_111416.JPG
-             │   └── 20220702_111508.JPG
-             └── 03
-                 ├── 20220703_101923.DNG
-                 ├── 20220703_112336.DNG
-                 └── 20220703_112338.DNG
+    └── 2022
+        └── 07
+            ├── 02
+            │   ├── 20220702_100940.JPG
+            │   ├── 20220702_111416.JPG
+            │   └── 20220702_111508.JPG
+            └── 03
+                ├── 20220703_101923.DNG
+                ├── 20220703_112336.DNG
+                └── 20220703_112338.DNG
 ```
 
-### Star History
+### Build
 
-[![Star History Chart](https://api.star-history.com/svg?repos=fregie/pho&type=Date)](https://star-history.com/#fregie/pho&Date)
+#### Requirements
 
-### Join QQ group
-<img src="assets/pho-qq-group.jpg" width="400">
+- Flutter 3.41.4 (stable) / Dart 3.11.1
+- Go 1.25 (toolchain go1.25.4)
+- JDK 17
+- Android SDK: compileSdk 36
+- Android NDK: required to build the embedded Go server (`gomobile bind`)
+- protoc and plugins: protoc-gen-go@v1.27.1, protoc-gen-go-grpc@v1.1.0, protoc_plugin@21.1.2 (Dart)
+
+#### Steps
+
+```bash
+# 1. Generate protobuf code (Go + Dart)
+make prebuild
+make protobuf
+
+# 2. Build the embedded Go server
+make server-aar      # Android -> android/app/libs/server.aar (needs gomobile)
+make server-ios      # iOS     -> ios/Frameworks/RUN.xcframework
+make server-linux    # Linux   -> linux/lib/run.so
+make server-windows  # Windows -> windows/lib/run.dll
+
+# 3. Build the app
+make apk             # Android APK
+make ipa             # iOS IPA
+
+# 4. Run tests (SMB / WebDAV / NFS cases need Docker containers)
+make test
+```
+
+> `flutter run` does not build `android/app/libs/server.aar` automatically — run `make server-aar` first, otherwise the embedded Go server cannot start.
+
+### Roadmap
+
+- [ ] More cloud backends (OneDrive / Google Drive / Alibaba Cloud Drive)
+- [ ] Polished desktop support (Windows / Linux)
+- [ ] Sync conflict handling and resumable transfers
+- [ ] Automatic grouping and smart classification by time and place
+- [ ] Continued scrolling performance work for very large galleries
+- [ ] Writing to multiple storage targets at once (beyond primary + backup)
+- [ ] More granular sync status reporting
+
+### Contributing
+
+Issues and suggestions are welcome — pull requests are welcome too.
+
+### License
+
+Licensed under the [GNU General Public License v3.0](LICENSE).
