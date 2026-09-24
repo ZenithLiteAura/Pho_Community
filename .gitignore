@@ -1,4 +1,4 @@
-﻿# Miscellaneous
+# Miscellaneous
 *.class
 *.log
 *.pyc
@@ -71,3 +71,7 @@ test/widgets/failures/
 
 # 日志采集导出的会话文件（真机运行时产生，不入库）
 pho-log-*.txt
+
+# Kotlin 编译器会话文件（构建产物）
+android/.kotlin/
+*.salive
