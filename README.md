@@ -40,15 +40,6 @@ Android 安装包见 [Releases](https://github.com/ZenithLiteAura/Pho_Community/
 - [x] NFS
 - [ ] OneDrive / Google Drive / 阿里云盘
 
-### 截图
-
-<p align="left">
-<img src="assets/screenshot/screenshot_local.png" width="220" alt="本地相册">
-<img src="assets/screenshot/screenshot_cloud.png" width="220" alt="云端相册">
-<img src="assets/screenshot/screenshot_sync.png" width="220" alt="同步页面">
-<img src="assets/screenshot/screenshot_view.png" width="220" alt="照片查看">
-</p>
-
 ### 文件存储结构
 
 文件按时间组织目录、以文件名存放源文件；根目录下的 `.thumbnail` 存放缩略图，结构与之镜像。你可以随时用其它方式取用这些照片，不需要依赖本应用。
