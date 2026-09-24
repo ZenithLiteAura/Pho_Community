@@ -435,11 +435,13 @@ const PingResponse$json = {
   '2': [
     {'1': 'server_start_time', '3': 1, '4': 1, '5': 3, '10': 'serverStartTime'},
     {'1': 'uptime_seconds', '3': 2, '4': 1, '5': 3, '10': 'uptimeSeconds'},
+    {'1': 'max_upload_size', '3': 3, '4': 1, '5': 3, '10': 'maxUploadSize'},
   ],
 };
 
 /// Descriptor for `PingResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List pingResponseDescriptor = $convert.base64Decode(
     'CgxQaW5nUmVzcG9uc2USKgoRc2VydmVyX3N0YXJ0X3RpbWUYASABKANSD3NlcnZlclN0YXJ0VG'
-    'ltZRIlCg51cHRpbWVfc2Vjb25kcxgCIAEoA1INdXB0aW1lU2Vjb25kcw==');
+    'ltZRIlCg51cHRpbWVfc2Vjb25kcxgCIAEoA1INdXB0aW1lU2Vjb25kcxImCg9tYXhfdXBsb2Fk'
+    'X3NpemUYAyABKANSDW1heFVwbG9hZFNpemU=');
 

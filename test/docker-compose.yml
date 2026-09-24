@@ -1,4 +1,4 @@
-version: "3"
+﻿version: "3"
 
 services:
   smb:
@@ -63,7 +63,7 @@ services:
   server:
     build:
       context: ..
-      dockerfile: server/Dockerfile
+      dockerfile: core/Dockerfile
     ports:
       - "50051:50051"
       - "8000:8000"

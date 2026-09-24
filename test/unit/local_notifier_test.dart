@@ -1,4 +1,4 @@
-// 单测：锁住 lib/notifications/local_notifier.dart 的 channel 契约。
+﻿// 单测：锁住 lib/notifications/local_notifier.dart 的 channel 契约。
 //
 // 三个 case：
 //  (a) succeeded > 0 -> 调 sendLocalNotification，title/body/isPassive 形态正确
@@ -12,14 +12,14 @@
 import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:img_syncer/notifications/local_notifier.dart';
-import 'package:img_syncer/global.dart';
+import 'package:img_syncer/bridge/notifications/local_notifier.dart';
+import 'package:img_syncer/app/state/global.dart';
 import 'package:img_syncer/l10n/app_localizations.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const channel = MethodChannel('com.example.img_syncer/notifications');
+  const channel = MethodChannel('com.ZenithLiteAura.app.pho/notifications');
   final messenger =
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
 

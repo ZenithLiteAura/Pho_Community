@@ -1,32 +1,32 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:img_syncer/desktop/home_page.dart';
-import 'package:img_syncer/event_bus.dart';
-import 'package:img_syncer/global.dart';
-import 'package:img_syncer/util.dart';
+import 'package:img_syncer/app/pages/desktop/home_page.dart';
+import 'package:img_syncer/app/state/event_bus.dart';
+import 'package:img_syncer/app/state/global.dart';
+import 'package:img_syncer/bridge/util.dart';
 import 'package:provider/provider.dart';
-import 'package:img_syncer/state_model.dart';
+import 'package:img_syncer/app/state/state_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'gallery_body.dart';
-import 'sync_body.dart';
+import 'app/pages/gallery_body.dart';
+import 'app/pages/sync_body.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/services.dart';
 import 'package:img_syncer/l10n/app_localizations.dart';
-import 'package:img_syncer/theme.dart';
-import 'package:img_syncer/settings/theme_controller.dart';
-import 'package:img_syncer/settings/dock_style_controller.dart';
-import 'package:img_syncer/settings/settings_home.dart';
+import 'package:img_syncer/app/theme/theme.dart';
+import 'package:img_syncer/app/theme/theme_controller.dart';
+import 'package:img_syncer/app/theme/dock_style_controller.dart';
+import 'package:img_syncer/app/pages/settings/settings_home.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:img_syncer/design_tokens.dart';
-import 'package:img_syncer/onboarding/onboarding_route.dart';
+import 'package:img_syncer/app/theme/design_tokens.dart';
+import 'package:img_syncer/app/pages/onboarding/onboarding_route.dart';
 // iOS 后台同步 headless entrypoint，必须被 main 的 import 图可达，
 // 否则 Debug Dart kernel 不会编译此库，BGProcessingTask 启动 headless
 // engine 时 Dart_LookupLibrary 找不到它。
 // ignore: unused_import
-import 'background_sync_entrypoint.dart';
+import 'bridge/background_sync_entrypoint.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -167,6 +167,19 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   int _selectedIndex = 0;
 
+  /// 三个主页面（预览 / 同步 / 设置）的翻页控制器。
+  ///
+  /// 用 [PageView] 取代原先的 [IndexedStack]：后者只切换显示哪个子树，
+  /// 没有任何过渡动画，点击 Dock 时页面切换很生硬。
+  late final PageController _pageController =
+      PageController(initialPage: _selectedIndex);
+
+  /// 切页动画时长（落在要求的 250–300ms 区间）。
+  static const Duration _pageTransitionDuration = Duration(milliseconds: 280);
+
+  /// 切页缓动：起步快、收尾缓，避免生硬。
+  static const Curve _pageTransitionCurve = Curves.easeOutCubic;
+
   @override
   void initState() {
     SnackBarManager.init(context);
@@ -218,10 +231,27 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
   }
 
+  /// Dock 点击：切换到目标页并播放翻页动画。
+  ///
+  /// 方向由 [PageController.animateToPage] 依据「当前页 → 目标页」的索引差自动决定，
+  /// 因此切换方向天然与点击项的位置一致；快速连续点击时它会平滑接续到最新目标，
+  /// 不会排队堆积。
   void _onItemTapped(int index) {
+    if (index == _selectedIndex) return;
     setState(() {
       _selectedIndex = index;
     });
+    _pageController.animateToPage(
+      index,
+      duration: _pageTransitionDuration,
+      curve: _pageTransitionCurve,
+    );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -253,8 +283,20 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                           ),
                         ),
                       Expanded(
-                        child: IndexedStack(
-                          index: _selectedIndex,
+                        // 用 PageView 的 children 形式（而非 builder）：
+                        // children 会让三个页面全部构建并常驻，状态与 IndexedStack
+                        // 等价（相册滚动位置、同步列表等不会因切页丢失），
+                        // 同时获得水平翻页过渡。
+                        // physics 置空以禁止手动滑动，交互仍只由底部 Dock 驱动。
+                        child: PageView(
+                          controller: _pageController,
+                          physics: const NeverScrollableScrollPhysics(),
+                          onPageChanged: (index) {
+                            // 兜底同步，避免极端情况下索引与页面漂移
+                            if (index != _selectedIndex) {
+                              setState(() => _selectedIndex = index);
+                            }
+                          },
                           children: [
                             GalleryBody(useLocal: true),
                             Consumer<SettingModel>(

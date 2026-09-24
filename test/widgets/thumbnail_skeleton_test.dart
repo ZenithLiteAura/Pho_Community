@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:img_syncer/widgets/thumbnail_skeleton.dart';
+import 'package:img_syncer/app/widgets/thumbnail_skeleton.dart';
 
 void main() {
   group('ThumbnailSkeleton', () {

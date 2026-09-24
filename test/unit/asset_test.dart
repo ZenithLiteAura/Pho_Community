@@ -1,11 +1,11 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:img_syncer/asset.dart';
-import 'package:img_syncer/global.dart';
-import 'package:img_syncer/storage/storage.dart';
+import 'package:img_syncer/app/state/asset.dart';
+import 'package:img_syncer/app/state/global.dart';
+import 'package:img_syncer/bridge/storage/storage.dart';
 import 'package:img_syncer/proto/img_syncer.pbgrpc.dart';
 import 'package:mockito/mockito.dart';
 import 'package:video_player/video_player.dart';

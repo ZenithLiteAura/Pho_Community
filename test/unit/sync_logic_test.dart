@@ -1,4 +1,4 @@
-// 单测：锁住 lib/sync_body.dart 中 syncPhotos() 的当前同步行为。
+﻿// 单测：锁住 lib/sync_body.dart 中 syncPhotos() 的当前同步行为。
 //
 // 4 个场景：
 //   (a) happy: 3 张全部上传成功
@@ -12,13 +12,13 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:img_syncer/asset.dart';
-import 'package:img_syncer/global.dart';
-import 'package:img_syncer/state_model.dart';
-import 'package:img_syncer/storage/storage.dart';
-import 'package:img_syncer/storage/storage_interface.dart';
-import 'package:img_syncer/sync_body.dart';
-import 'package:img_syncer/sync_timer.dart';
+import 'package:img_syncer/app/state/asset.dart';
+import 'package:img_syncer/app/state/global.dart';
+import 'package:img_syncer/app/state/state_model.dart';
+import 'package:img_syncer/bridge/storage/storage.dart';
+import 'package:img_syncer/bridge/storage/storage_interface.dart';
+import 'package:img_syncer/app/pages/sync_body.dart';
+import 'package:img_syncer/core/sync_timer.dart';
 import 'package:mockito/mockito.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -81,6 +81,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uploadFailed => 'Upload failed';
 
   @override
+  String get retrying => 'Retrying';
+
+  @override
   String get uploaded => 'Uploaded';
 
   @override
@@ -94,6 +97,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get remoteStorageType => 'Address';
+
+  @override
+  String get storageProtocol => 'Storage protocol';
+
+  @override
+  String get aboutStorage => 'About storage';
 
   @override
   String get dockStyle => 'Bottom dock style';
@@ -626,6 +635,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupStorage => 'Backup storage (optional)';
 
   @override
+  String get testPrimaryStorage => 'Test primary';
+
+  @override
+  String get savePrimaryStorage => 'Save primary';
+
+  @override
+  String get testBackupStorage => 'Test backup';
+
+  @override
+  String get saveBackupStorage => 'Save backup';
+
+  @override
   String get backupStorageDesc =>
       'Dual WebDAV: uploads automatically fall back to the backup when the primary fails';
 
@@ -670,6 +691,65 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dataManagement => 'Data management';
+
+  @override
+  String get logAndDiagnostics => 'Logs & diagnostics';
+
+  @override
+  String get logDesc =>
+      'Records only the logs produced after you start collecting. Stopping saves the session; the latest 8 are kept.';
+
+  @override
+  String get logStartCollect => 'Start collecting';
+
+  @override
+  String get logStopCollect => 'Stop & save';
+
+  @override
+  String get logCollecting => 'Collecting';
+
+  @override
+  String get logIdle => 'Not collecting';
+
+  @override
+  String get logLevel => 'Log level';
+
+  @override
+  String get logLevelHint => 'and above';
+
+  @override
+  String get logPreview => 'Live log';
+
+  @override
+  String get logPreviewEmpty =>
+      'Logs produced after starting will show up here';
+
+  @override
+  String get logExport => 'Export log';
+
+  @override
+  String get logExportSuccess => 'Exported';
+
+  @override
+  String get logExportFailed => 'Export failed';
+
+  @override
+  String get logSaveFailed => 'Failed to save the log';
+
+  @override
+  String get logHistory => 'History';
+
+  @override
+  String get logHistoryKeep => 'Keeps the latest';
+
+  @override
+  String get logHistoryEmpty => 'No saved sessions yet';
+
+  @override
+  String get logClearHistory => 'Clear';
+
+  @override
+  String get logEntries => 'entries';
 
   @override
   String get syncNotify => 'Sync notifications';

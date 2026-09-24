@@ -1898,6 +1898,7 @@ class PingResponse extends $pb.GeneratedMessage {
   factory PingResponse({
     $fixnum.Int64? serverStartTime,
     $fixnum.Int64? uptimeSeconds,
+    $fixnum.Int64? maxUploadSize,
   }) {
     final $result = create();
     if (serverStartTime != null) {
@@ -1905,6 +1906,9 @@ class PingResponse extends $pb.GeneratedMessage {
     }
     if (uptimeSeconds != null) {
       $result.uptimeSeconds = uptimeSeconds;
+    }
+    if (maxUploadSize != null) {
+      $result.maxUploadSize = maxUploadSize;
     }
     return $result;
   }
@@ -1915,6 +1919,7 @@ class PingResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PingResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'img_syncer'), createEmptyInstance: create)
     ..aInt64(1, _omitFieldNames ? '' : 'serverStartTime')
     ..aInt64(2, _omitFieldNames ? '' : 'uptimeSeconds')
+    ..aInt64(3, _omitFieldNames ? '' : 'maxUploadSize')
     ..hasRequiredFields = false
   ;
 
@@ -1956,6 +1961,17 @@ class PingResponse extends $pb.GeneratedMessage {
   $core.bool hasUptimeSeconds() => $_has(1);
   @$pb.TagNumber(2)
   void clearUptimeSeconds() => clearField(2);
+
+  /// 单请求上传上限（字节）。客户端据此在发起上传前预检，
+  /// 避免超过上限后服务端关闭连接、客户端只见 Broken pipe。
+  @$pb.TagNumber(3)
+  $fixnum.Int64 get maxUploadSize => $_getI64(2);
+  @$pb.TagNumber(3)
+  set maxUploadSize($fixnum.Int64 v) { $_setInt64(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasMaxUploadSize() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearMaxUploadSize() => clearField(3);
 }
 
 

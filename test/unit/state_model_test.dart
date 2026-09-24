@@ -1,7 +1,7 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:img_syncer/proto/img_syncer.pbgrpc.dart';
-import 'package:img_syncer/state_model.dart';
+import 'package:img_syncer/app/state/state_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// 创建一个模拟响应流，用于测试 receiveResponses。

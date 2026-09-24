@@ -1,7 +1,7 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:img_syncer/asset.dart';
-import 'package:img_syncer/state_model.dart';
-import 'package:img_syncer/sync_body.dart';
+﻿import 'package:flutter_test/flutter_test.dart';
+import 'package:img_syncer/app/state/asset.dart';
+import 'package:img_syncer/app/state/state_model.dart';
+import 'package:img_syncer/app/pages/sync_body.dart';
 
 /// 可控的 Asset 子类，绕过 photo_manager AssetEntity 依赖。
 class _TestAsset extends Asset {

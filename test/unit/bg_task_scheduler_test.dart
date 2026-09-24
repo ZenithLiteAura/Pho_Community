@@ -1,5 +1,5 @@
-// 单测：锁住 lib/sync/bg_task_scheduler.dart 中 scheduleBgTaskViaChannel()
-// 的 channel 契约：调用 `com.example.img_syncer/notifications` 的 `scheduleBgTask`
+﻿// 单测：锁住 lib/sync/bg_task_scheduler.dart 中 scheduleBgTaskViaChannel()
+// 的 channel 契约：调用 `com.ZenithLiteAura.app.pho/notifications` 的 `scheduleBgTask`
 // 方法，且不传参数。
 //
 // 由于该函数在 native 端才真正调度 BGProcessingTask，Dart 单测只能验证 channel 调用
@@ -9,12 +9,12 @@
 // MethodChannel.setMockMethodCallHandler 在无完整 Flutter 环境下可用。
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:img_syncer/sync/bg_task_scheduler.dart';
+import 'package:img_syncer/core/sync/bg_task_scheduler.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const channel = MethodChannel('com.example.img_syncer/notifications');
+  const channel = MethodChannel('com.ZenithLiteAura.app.pho/notifications');
   final messenger =
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
 

@@ -1,10 +1,10 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:img_syncer/storage/storage.dart';
+import 'package:img_syncer/bridge/storage/storage.dart';
 import 'package:img_syncer/proto/img_syncer.pbgrpc.dart';
-import 'package:img_syncer/global.dart';
+import 'package:img_syncer/app/state/global.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
 

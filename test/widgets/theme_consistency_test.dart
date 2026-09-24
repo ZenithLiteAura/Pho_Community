@@ -1,9 +1,9 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:img_syncer/main.dart';
-import 'package:img_syncer/theme.dart';
+import 'package:img_syncer/app/theme/theme.dart';
 
 void main() {
   // ── 共享 ColorScheme ──────────────────────────────────────────

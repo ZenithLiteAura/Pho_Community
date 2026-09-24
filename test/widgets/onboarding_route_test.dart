@@ -1,16 +1,19 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:img_syncer/global.dart' as global;
+import 'package:img_syncer/app/state/global.dart' as global;
 import 'package:img_syncer/l10n/app_localizations.dart';
-import 'package:img_syncer/onboarding/onboarding_route.dart';
-import 'package:img_syncer/setting_storage_route.dart';
+import 'package:img_syncer/app/pages/onboarding/onboarding_route.dart';
+import 'package:img_syncer/app/pages/storage_config_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   group('OnboardingRoute', () {
     Widget buildTestWidget({required VoidCallback onComplete}) {
       return MaterialApp(
+        // 固定英文 locale：本文件的断言使用英文文案，显式声明可避免
+        // 依赖开发机系统语言（中文系统下会被解析为 zh 而使断言失败）。
+        locale: const Locale('en'),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         home: Builder(
@@ -65,7 +68,7 @@ void main() {
       expect(completed, isTrue);
     });
 
-    testWidgets('滑动到最后一页点击开始使用进入权限步骤', (WidgetTester tester) async {
+    testWidgets('滑动到最后一页点击开始使用进入存储步骤', (WidgetTester tester) async {
       bool completed = false;
       SharedPreferences.setMockInitialValues({});
 
@@ -83,13 +86,13 @@ void main() {
       await tester.tap(find.text('Get Started'));
       await pumpUntilSettled(tester);
 
-      // 此时应进入权限步骤，未触发 onComplete
+      // 此时应直接进入存储步骤（权限申请已移出引导流程），未触发 onComplete
       expect(completed, isFalse);
-      expect(find.text('Grant permission'), findsOneWidget);
-      expect(find.text('Photo access needed'), findsOneWidget);
+      expect(find.text('Set up cloud storage (optional)'), findsOneWidget);
+      expect(find.text('Set up storage'), findsOneWidget);
     });
 
-    testWidgets('权限步骤：授权成功后进入存储步骤', (WidgetTester tester) async {
+    testWidgets('点击开始使用后直接进入存储步骤', (WidgetTester tester) async {
       bool completed = false;
       SharedPreferences.setMockInitialValues({});
 
@@ -116,10 +119,6 @@ void main() {
       await tester.tap(find.text('Get Started'));
       await pumpUntilSettled(tester);
 
-      // 点击授予权限
-      await tester.tap(find.text('Grant permission'));
-      await pumpUntilSettled(tester);
-
       // 进入存储步骤
       expect(find.text('Set up cloud storage (optional)'), findsOneWidget);
       expect(find.text('Set up storage'), findsOneWidget);
@@ -129,50 +128,7 @@ void main() {
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, null);
     });
 
-    testWidgets('权限步骤：授权失败后显示稍后设置并完成引导', (WidgetTester tester) async {
-      bool completed = false;
-      SharedPreferences.setMockInitialValues({});
-
-      const channel = MethodChannel('com.fluttercandies/photo_manager');
-      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        channel,
-        (MethodCall methodCall) async {
-          if (methodCall.method == 'requestPermissionExtend') {
-            return 2; // 非 authorized
-          }
-          return null;
-        },
-      );
-
-      await tester.pumpWidget(
-        buildTestWidget(onComplete: () => completed = true),
-      );
-      await pumpUntilSettled(tester);
-
-      final pageView = tester.widget<PageView>(find.byType(PageView));
-      pageView.controller!.jumpToPage(2);
-      await pumpUntilSettled(tester);
-      await tester.tap(find.text('Get Started'));
-      await pumpUntilSettled(tester);
-
-      await tester.tap(find.text('Grant permission'));
-      await pumpUntilSettled(tester);
-
-      // 授权失败后显示稍后设置按钮
-      expect(find.text('Set up later'), findsOneWidget);
-
-      await tester.tap(find.text('Set up later'));
-      await pumpUntilSettled(tester);
-
-      // 完成 onComplete 并写入 has_onboarded
-      expect(completed, isTrue);
-      final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getBool('has_onboarded'), isTrue);
-
-      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, null);
-    });
-
-    testWidgets('存储步骤：点击设置存储显示 SettingStorageRouteBody', (WidgetTester tester) async {
+    testWidgets('存储步骤：点击设置存储显示 StorageConfigBody', (WidgetTester tester) async {
       SharedPreferences.setMockInitialValues({});
 
       const channel = MethodChannel('com.fluttercandies/photo_manager');
@@ -197,15 +153,12 @@ void main() {
       await tester.tap(find.text('Get Started'));
       await pumpUntilSettled(tester);
 
-      await tester.tap(find.text('Grant permission'));
-      await pumpUntilSettled(tester);
-
       // 点击设置存储
       await tester.tap(find.text('Set up storage'));
       await pumpUntilSettled(tester);
 
-      // SettingStorageRouteBody 应出现
-      expect(find.byType(SettingStorageRouteBody), findsOneWidget);
+      // StorageConfigBody 应出现（引导流程复用统一的存储配置主体）
+      expect(find.byType(StorageConfigBody), findsOneWidget);
 
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, null);
     });
@@ -234,9 +187,6 @@ void main() {
       pageView.controller!.jumpToPage(2);
       await pumpUntilSettled(tester);
       await tester.tap(find.text('Get Started'));
-      await pumpUntilSettled(tester);
-
-      await tester.tap(find.text('Grant permission'));
       await pumpUntilSettled(tester);
 
       await tester.tap(find.text('Done'));

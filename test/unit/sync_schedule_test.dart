@@ -1,4 +1,4 @@
-// 单测：锁住 sync_timer.dart 中定时同步（定时模式）的计算逻辑。
+﻿// 单测：锁住 sync_timer.dart 中定时同步（定时模式）的计算逻辑。
 //
 // 两个纯函数：
 //   - parseScheduleTime("HH:mm", day)  -> 当天对应时刻或 null
@@ -6,7 +6,7 @@
 //
 // 不触碰平台通道；仅 import sync_timer.dart 复用其顶层函数。
 import 'package:flutter_test/flutter_test.dart';
-import 'package:img_syncer/sync_timer.dart';
+import 'package:img_syncer/core/sync_timer.dart';
 
 void main() {
   setUpAll(() {

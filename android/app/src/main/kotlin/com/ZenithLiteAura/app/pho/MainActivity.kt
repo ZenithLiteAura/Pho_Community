@@ -1,4 +1,4 @@
-package com.ZenithLiteAura.app.pho
+﻿package com.ZenithLiteAura.app.pho
 
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
@@ -16,6 +16,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.view.WindowManager
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -23,8 +24,8 @@ import java.io.File
 
 
 class MainActivity : FlutterActivity() {
-  private val CHANNEL = "com.example.img_syncer/RunGrpcServer"
-  private val NOTIFY_CHANNEL = "com.example.img_syncer/notifications"
+  private val CHANNEL = "com.ZenithLiteAura.app.pho/RunGrpcServer"
+  private val NOTIFY_CHANNEL = "com.ZenithLiteAura.app.pho/notifications"
   private val SYNC_NOTIFICATION_CHANNEL_ID = "pho_sync"
   private val SYNC_NOTIFICATION_ID = 1001
 
@@ -57,6 +58,14 @@ class MainActivity : FlutterActivity() {
               val isPassive = call.argument<Boolean>("isPassive") ?: false
               sendSyncNotification(title, body)
               result.success(null)
+            }
+            // 与 iOS AppDelegate 的 keepScreenOn 对称：直接操作窗口标志。
+            // 不再使用 wakelock_plus —— 其 Dart 端(wakelock_plus_platform_interface
+            // 1.6.0)与 Android 端(1.1.4)的 pigeon 通道名不一致，会报 channel-error。
+            "keepScreenOn" -> {
+              val enable = call.argument<Boolean>("enable") ?: false
+              setKeepScreenOn(enable)
+              result.success(true)
             }
             else -> result.notImplemented()
           }
@@ -95,6 +104,22 @@ class MainActivity : FlutterActivity() {
         .setAutoCancel(true)
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
     manager.notify(SYNC_NOTIFICATION_ID, builder.build())
+  }
+
+  // 保持屏幕常亮（同步/上传期间避免息屏导致网络与 CPU 被系统限制）。
+  // 必须在 UI 线程操作 window；Activity 已销毁等异常仅记录，不影响主流程。
+  private fun setKeepScreenOn(enable: Boolean) {
+    runOnUiThread {
+      try {
+        if (enable) {
+          window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+          window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+      } catch (e: Exception) {
+        android.util.Log.w("PhoMainActivity", "setKeepScreenOn($enable) failed", e)
+      }
+    }
   }
 
   private fun scanFile(path: String?, volumeName: String?, relativePath: String?, mimeType: String?) {

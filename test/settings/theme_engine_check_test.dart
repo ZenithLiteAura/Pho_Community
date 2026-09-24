@@ -1,4 +1,4 @@
-// 单测：锁住双主题引擎的关键差异，防止 MIUIX / Material 3 视觉退化。
+﻿// 单测：锁住双主题引擎的关键差异，防止 MIUIX / Material 3 视觉退化。
 //
 // 验证点：
 // 1. 两种模式构建出的 ThemeData 在背景、卡片、导航栏、字号上必须可区分；
@@ -6,7 +6,7 @@
 // 3. 默认模式为 MIUIX。
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:img_syncer/settings/theme_controller.dart';
+import 'package:img_syncer/app/theme/theme_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

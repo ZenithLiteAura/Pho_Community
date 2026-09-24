@@ -1,4 +1,4 @@
-import UIKit
+﻿import UIKit
 import Flutter
 import RUN
 import BackgroundTasks
@@ -11,7 +11,7 @@ import UserNotifications
   /// foreground (FlutterViewController.binaryMessenger) 与 headless engine 两条路径共用
   private func registerAppChannels(on messenger: FlutterBinaryMessenger) {
     let runServerChannel = FlutterMethodChannel(
-      name: "com.example.img_syncer/RunGrpcServer",
+      name: "com.ZenithLiteAura.app.pho/RunGrpcServer",
       binaryMessenger: messenger
     )
     runServerChannel.setMethodCallHandler { (call: FlutterMethodCall, result: @escaping FlutterResult) in
@@ -22,7 +22,7 @@ import UserNotifications
 
     // notifications channel: foreground + headless 双注册 (本函数被两处调用)
     let notificationsChannel = FlutterMethodChannel(
-      name: "com.example.img_syncer/notifications",
+      name: "com.ZenithLiteAura.app.pho/notifications",
       binaryMessenger: messenger
     )
     notificationsChannel.setMethodCallHandler { (call: FlutterMethodCall, result: @escaping FlutterResult) in
@@ -56,7 +56,7 @@ import UserNotifications
         result(UIApplication.shared.backgroundRefreshStatus.rawValue)
 
       case "scheduleBgTask":
-        let request = BGProcessingTaskRequest(identifier: "com.example.img_syncer.background-sync")
+        let request = BGProcessingTaskRequest(identifier: "com.ZenithLiteAura.app.pho.background-sync")
         request.requiresExternalPower = true
         request.requiresNetworkConnectivity = true
         request.earliestBeginDate = Date(timeIntervalSinceNow: 3600)
@@ -103,7 +103,7 @@ import UserNotifications
   ) -> Bool {
     // Apple 强制约束: BGTaskScheduler handler 必须在 application:didFinishLaunchingWithOptions: 返回前注册
     BGTaskScheduler.shared.register(
-      forTaskWithIdentifier: "com.example.img_syncer.background-sync",
+      forTaskWithIdentifier: "com.ZenithLiteAura.app.pho.background-sync",
       using: nil
     ) { task in
       self.handleBgSyncTask(task as! BGProcessingTask)
@@ -147,7 +147,7 @@ import UserNotifications
 
     // 3. Dart <-> Native 协商 channel (用于 Dart 端 invokeMethod 通知完成 / cancel)
     let bgSyncChannel = FlutterMethodChannel(
-      name: "com.example.img_syncer/backgroundSync",
+      name: "com.ZenithLiteAura.app.pho/backgroundSync",
       binaryMessenger: engine.binaryMessenger
     )
 

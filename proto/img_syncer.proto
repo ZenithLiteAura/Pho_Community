@@ -176,4 +176,7 @@ message PingRequest {}
 message PingResponse {
   int64 server_start_time = 1;
   int64 uptime_seconds = 2;
+  // 单请求上传上限（字节）。客户端据此在发起上传前预检，
+  // 避免超过上限后服务端关闭连接、客户端只见 Broken pipe。
+  int64 max_upload_size = 3;
 }

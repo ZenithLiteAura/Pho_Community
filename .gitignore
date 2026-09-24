@@ -1,4 +1,4 @@
-# Miscellaneous
+﻿# Miscellaneous
 *.class
 *.log
 *.pyc
@@ -48,7 +48,7 @@ baidu_drive_test.go
 debug-info
 ios/Frameworks/RUN.xcframework
 android/app/libs/server.aar
-server/server
+core/server
 test/results/
 *.aar
 
@@ -63,5 +63,11 @@ buildtools/
 交付产物/
 windows.bak/
 linux.bak/
-server/output/
+core/output/
 *.exe
+
+# Golden 测试失败时自动生成的差异图（测试副产物，不入库）
+test/widgets/failures/
+
+# 日志采集导出的会话文件（真机运行时产生，不入库）
+pho-log-*.txt

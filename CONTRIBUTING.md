@@ -1,4 +1,4 @@
-# 贡献指南 (Contributing Guide)
+﻿# 贡献指南 (Contributing Guide)
 
 感谢你愿意为 Pho 开源版贡献！这个项目从 2023 年至今一直是单人维护，很需要社区的力量。无论是修 bug、做功能、写文档还是报告问题，都非常欢迎。
 
@@ -7,7 +7,7 @@
 Pho 是一个**无服务端**的照片查看与同步应用：
 
 - **Flutter 客户端**（`lib/`）：UI、状态管理、gRPC 客户端
-- **嵌入式 Go 后端**（`server/`）：通过 gomobile 编译进 app，提供 gRPC 控制接口 + HTTP 文件传输
+- **嵌入式 Go 后端**（`core/`）：通过 gomobile 编译进 app，提供 gRPC 控制接口 + HTTP 文件传输
 - 手机**直连** SMB / WebDAV / NFS 存储，无数据库、无中间服务器，存储文件系统即数据库（按 `YYYY/MM/DD/` 组织）
 - 本仓库为开源版，仅含核心查看与同步功能（SMB/WebDAV/NFS）
 
@@ -47,9 +47,9 @@ make apk                             # release APK
 | 目录 | 内容 | 常见改动场景 |
 |------|------|-------------|
 | `lib/` | Flutter UI + gRPC 客户端 | 界面、状态、同步逻辑（`lib/sync/`） |
-| `server/api/` | gRPC 服务实现 + HTTP 文件处理 | 新增接口 |
-| `server/imgmanager/` | 核心：上传/下载/缩略图/加密 | 同步行为改动 |
-| `server/drive/` | 存储后端（smb / webdav / nfs） | 新增存储类型 |
+| `core/api/` | gRPC 服务实现 + HTTP 文件处理 | 新增接口 |
+| `core/imgmanager/` | 核心：上传/下载/缩略图/加密 | 同步行为改动 |
+| `core/drive/` | 存储后端（smb / webdav / nfs） | 新增存储类型 |
 | `proto/` | protobuf 定义（唯一数据源） | 新增 RPC 时改这里 |
 | `test/` | Docker 测试环境（SMB/WebDAV/NFS 容器） | 集成测试 |
 
@@ -90,7 +90,7 @@ make apk                             # release APK
 ## 测试
 
 ```bash
-make test   # 需要 Docker：拉起 SMB/WebDAV/NFS 容器 → go test ./server/api ./server/drive
+make test   # 需要 Docker：拉起 SMB/WebDAV/NFS 容器 → go test ./core/api ./core/drive
 ```
 
 - 涉及同步/存储的改动务必跑 `make test`

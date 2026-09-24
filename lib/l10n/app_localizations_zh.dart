@@ -81,6 +81,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get uploadFailed => '上传失败';
 
   @override
+  String get retrying => '重试中';
+
+  @override
   String get uploaded => '已上传';
 
   @override
@@ -94,6 +97,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get remoteStorageType => '地址';
+
+  @override
+  String get storageProtocol => '存储协议';
+
+  @override
+  String get aboutStorage => '关于存储';
 
   @override
   String get dockStyle => '底部 Dock 风格';
@@ -605,6 +614,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get backupStorage => '备份存储（可选）';
 
   @override
+  String get testPrimaryStorage => '测试主存储';
+
+  @override
+  String get savePrimaryStorage => '保存主存储';
+
+  @override
+  String get testBackupStorage => '测试备用存储';
+
+  @override
+  String get saveBackupStorage => '保存备用存储';
+
+  @override
   String get backupStorageDesc => '双 WebDAV：主目标上传失败时自动回退到备份目标';
 
   @override
@@ -648,6 +669,63 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get dataManagement => '数据管理';
+
+  @override
+  String get logAndDiagnostics => '日志与诊断';
+
+  @override
+  String get logDesc => '仅采集点击「开始采集」之后产生的日志。停止时自动保存，并只保留最近 8 条。';
+
+  @override
+  String get logStartCollect => '开始采集';
+
+  @override
+  String get logStopCollect => '停止并保存';
+
+  @override
+  String get logCollecting => '采集中';
+
+  @override
+  String get logIdle => '未开始采集';
+
+  @override
+  String get logLevel => '日志级别';
+
+  @override
+  String get logLevelHint => '及以上';
+
+  @override
+  String get logPreview => '实时日志';
+
+  @override
+  String get logPreviewEmpty => '开始采集后，新产生的日志会实时显示在这里';
+
+  @override
+  String get logExport => '导出日志';
+
+  @override
+  String get logExportSuccess => '已导出';
+
+  @override
+  String get logExportFailed => '导出失败';
+
+  @override
+  String get logSaveFailed => '保存日志失败';
+
+  @override
+  String get logHistory => '历史记录';
+
+  @override
+  String get logHistoryKeep => '自动保留最近';
+
+  @override
+  String get logHistoryEmpty => '暂无历史记录';
+
+  @override
+  String get logClearHistory => '清空';
+
+  @override
+  String get logEntries => '条';
 
   @override
   String get syncNotify => '同步通知';

@@ -1,4 +1,4 @@
-BUILD_VERSION   := $(shell git describe --tags)
+﻿BUILD_VERSION   := $(shell git describe --tags)
 GIT_COMMIT_SHA1 := $(shell git rev-parse HEAD)
 BUILD_TIME      := $(shell date "+%F %T")
 BUILD_NAME      := img_syncer_server
@@ -26,27 +26,27 @@ server:
 		-X '${VERSION_PACKAGE_NAME}.Describe=${DESCRIBE}' \
 		-X '${VERSION_PACKAGE_NAME}.Name=${BUILD_NAME}' \
 		" \
-    -o server/output/${BUILD_NAME} ./server
+    -o core/output/${BUILD_NAME} ./core
 
 server-aar: protobuf
-	CGO_ENABLED=0 gomobile bind -target=android -androidapi 21 -ldflags "-s -w" -o android/app/libs/server.aar ./server/run
+	CGO_ENABLED=0 gomobile bind -target=android -androidapi 21 -ldflags "-s -w" -o android/app/libs/server.aar ./core/run
 
 server-ios: protobuf
-	CGO_ENABLED=0 gomobile bind -target=ios -ldflags "-s -w" -o ios/Frameworks/RUN.xcframework ./server/run
+	CGO_ENABLED=0 gomobile bind -target=ios -ldflags "-s -w" -o ios/Frameworks/RUN.xcframework ./core/run
 
 server-linux: protobuf
-	CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o linux/lib/run.so -buildmode=c-shared ./server/clib
+	CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o linux/lib/run.so -buildmode=c-shared ./core/clib
 
 server-windows:
-	# CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -o windows/lib/run.lib -buildmode=c-shared ./server/clib
-	go build -o windows/lib/run.dll -buildmode=c-shared ./server/clib
+	# CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -o windows/lib/run.lib -buildmode=c-shared ./core/clib
+	go build -o windows/lib/run.dll -buildmode=c-shared ./core/clib
 	sed -i '/#include <complex.h>/d' windows\lib\run.h
 	sed -i '/typedef _Fcomplex GoComplex64;/d' windows\lib\run.h
 	sed -i '/typedef _Dcomplex GoComplex128;/d' windows\lib\run.h
 	dlltool -d windows/lib/run.def -l windows/lib/run.lib
 
 server-macos: protobuf
-	CGO_ENABLED=0 gomobile bind -target=macos -ldflags "-s -w" -o macos/Frameworks/RUN.xcframework ./server/run
+	CGO_ENABLED=0 gomobile bind -target=macos -ldflags "-s -w" -o macos/Frameworks/RUN.xcframework ./core/run
 
 
 apk:
@@ -58,7 +58,7 @@ ipa:
 .PHONY: test
 test:
 	docker compose -f test/docker-compose.yml up -d --build --wait
-	go test -v ./server/api -p 1 -failfast
-	go test -v ./server/drive -p 1 -failfast
+	go test -v ./core/api -p 1 -failfast
+	go test -v ./core/drive -p 1 -failfast
 	docker compose -f test/docker-compose.yml down
 	

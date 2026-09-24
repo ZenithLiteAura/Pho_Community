@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:img_syncer/gallery_body.dart';
-import 'package:img_syncer/state_model.dart';
-import 'package:img_syncer/global.dart' as global;
+import 'package:img_syncer/app/pages/gallery_body.dart';
+import 'package:img_syncer/app/state/state_model.dart';
+import 'package:img_syncer/app/state/global.dart' as global;
 import 'package:img_syncer/l10n/app_localizations.dart';
 
 /// 可计数的 SettingModel，追踪 addListener / removeListener 调用次数

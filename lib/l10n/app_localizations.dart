@@ -242,6 +242,12 @@ abstract class AppLocalizations {
   /// **'Upload failed'**
   String get uploadFailed;
 
+  /// No description provided for @retrying.
+  ///
+  /// In en, this message translates to:
+  /// **'Retrying'**
+  String get retrying;
+
   /// No description provided for @uploaded.
   ///
   /// In en, this message translates to:
@@ -271,6 +277,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Address'**
   String get remoteStorageType;
+
+  /// No description provided for @storageProtocol.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage protocol'**
+  String get storageProtocol;
+
+  /// No description provided for @aboutStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'About storage'**
+  String get aboutStorage;
 
   /// No description provided for @dockStyle.
   ///
@@ -1262,6 +1280,30 @@ abstract class AppLocalizations {
   /// **'Backup storage (optional)'**
   String get backupStorage;
 
+  /// No description provided for @testPrimaryStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Test primary'**
+  String get testPrimaryStorage;
+
+  /// No description provided for @savePrimaryStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Save primary'**
+  String get savePrimaryStorage;
+
+  /// No description provided for @testBackupStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Test backup'**
+  String get testBackupStorage;
+
+  /// No description provided for @saveBackupStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Save backup'**
+  String get saveBackupStorage;
+
   /// No description provided for @backupStorageDesc.
   ///
   /// In en, this message translates to:
@@ -1351,6 +1393,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Data management'**
   String get dataManagement;
+
+  /// No description provided for @logAndDiagnostics.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs & diagnostics'**
+  String get logAndDiagnostics;
+
+  /// No description provided for @logDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Records only the logs produced after you start collecting. Stopping saves the session; the latest 8 are kept.'**
+  String get logDesc;
+
+  /// No description provided for @logStartCollect.
+  ///
+  /// In en, this message translates to:
+  /// **'Start collecting'**
+  String get logStartCollect;
+
+  /// No description provided for @logStopCollect.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop & save'**
+  String get logStopCollect;
+
+  /// No description provided for @logCollecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Collecting'**
+  String get logCollecting;
+
+  /// No description provided for @logIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not collecting'**
+  String get logIdle;
+
+  /// No description provided for @logLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Log level'**
+  String get logLevel;
+
+  /// No description provided for @logLevelHint.
+  ///
+  /// In en, this message translates to:
+  /// **'and above'**
+  String get logLevelHint;
+
+  /// No description provided for @logPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Live log'**
+  String get logPreview;
+
+  /// No description provided for @logPreviewEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs produced after starting will show up here'**
+  String get logPreviewEmpty;
+
+  /// No description provided for @logExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export log'**
+  String get logExport;
+
+  /// No description provided for @logExportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Exported'**
+  String get logExportSuccess;
+
+  /// No description provided for @logExportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Export failed'**
+  String get logExportFailed;
+
+  /// No description provided for @logSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save the log'**
+  String get logSaveFailed;
+
+  /// No description provided for @logHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get logHistory;
+
+  /// No description provided for @logHistoryKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keeps the latest'**
+  String get logHistoryKeep;
+
+  /// No description provided for @logHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved sessions yet'**
+  String get logHistoryEmpty;
+
+  /// No description provided for @logClearHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get logClearHistory;
+
+  /// No description provided for @logEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'entries'**
+  String get logEntries;
 
   /// No description provided for @syncNotify.
   ///
