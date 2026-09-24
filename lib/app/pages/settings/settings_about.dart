@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import 'package:img_syncer/app/state/global.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
@@ -51,7 +51,7 @@ class SettingsAboutPage extends StatelessWidget {
                   leading: const Icon(Icons.info_outline, size: 26),
                   title: Text(l10n.appVersion),
                   subtitle: Text(
-                    'Pho - 3.2.2',
+                    'Pho - 3.3',
                     style: TextStyle(color: colorScheme.primary),
                   ),
                 ),
