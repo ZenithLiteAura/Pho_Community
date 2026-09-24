@@ -40,15 +40,6 @@ See [Releases](https://github.com/ZenithLiteAura/Pho_Community/releases) for the
 - [x] NFS
 - [ ] OneDrive / Google Drive / Alibaba Cloud Drive
 
-### Screenshots
-
-<p align="left">
-<img src="assets/screenshot/screenshot_local.png" width="220" alt="Local Gallery">
-<img src="assets/screenshot/screenshot_cloud.png" width="220" alt="Cloud Gallery">
-<img src="assets/screenshot/screenshot_sync.png" width="220" alt="Sync Page">
-<img src="assets/screenshot/screenshot_view.png" width="220" alt="Photo Viewer">
-</p>
-
 ### File storage layout
 
 Source files are stored by filename under date-based directories. Thumbnails live in a `.thumbnail` directory at the root, mirroring the same structure. You are free to use the uploaded photos in any other way — no dependency on this app.
