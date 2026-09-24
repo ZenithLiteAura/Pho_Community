@@ -8,7 +8,7 @@
 PRODUCT_NAME = pho
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.fregie.pho
+PRODUCT_BUNDLE_IDENTIFIER = com.ZenithLiteAura.app.pho
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2026 ZenithLiteAura. All rights reserved.
