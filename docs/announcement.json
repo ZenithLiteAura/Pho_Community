@@ -1,5 +1,4 @@
 {
-  "_readme": "公告文件。应用内「设置 → 应用信息 → 连续点击图标 7 次 → 公告 → 公告管理工具」可直接发布/下线/回滚；字段说明见 docs/公告使用说明.md。客户端按 updatedAt 取最新的一份，因此 CDN 的旧缓存不会盖住新公告。",
   "enabled": true,
   "id": "notice-2026-003",
   "level": "critical",
@@ -17,5 +16,5 @@
   "minVersion": "",
   "maxVersion": "",
   "once": true,
-  "updatedAt": "2026-10-07T13:44:21.726Z"
+  "updatedAt": "2026-10-07T13:44:41.174Z"
 }
