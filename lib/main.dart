@@ -24,6 +24,7 @@ import 'package:img_syncer/app/pages/settings/settings_home.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
 import 'package:img_syncer/app/pages/onboarding/onboarding_route.dart';
+import 'app/widgets/announcement_dialog.dart';
 import 'app/widgets/startup_notice_dialog.dart';
 import 'app/widgets/update_dialog.dart';
 // iOS 后台同步 headless entrypoint，必须被 main 的 import 图可达，
@@ -80,6 +81,9 @@ class _AppEntryPointState extends State<_AppEntryPoint> {
         if (!mounted) return;
         // 先弹版权/致谢声明（10 秒锁定），关闭后再检查更新，避免两个弹窗打架。
         await showStartupNoticeIfNeeded(context);
+        if (!mounted) return;
+        // 应用内公告：命中「生效窗口 + 版本区间 + 未读」才弹窗，其余静默。
+        await autoCheckAnnouncementAndNotify(context);
         if (!mounted) return;
         // 启动时自动检查更新：仅在有新版本时弹窗，失败/已是最新一律静默。
         await autoCheckForUpdateAndNotify(context);

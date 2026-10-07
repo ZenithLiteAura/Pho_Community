@@ -1,0 +1,17 @@
+{
+  "_readme": "公告文件。改完直接 push 到 main 即可生效：raw 源约 5 分钟、GitHub Pages 约 10 分钟、jsDelivr 缓存 12 小时（可用 https://purge.jsdelivr.net/gh/ZenithLiteAura/Pho_Community@main/docs/announcement.json 主动刷新）。字段说明见 docs/公告使用说明.md。",
+  "enabled": false,
+  "id": "example-2026-10",
+  "level": "info",
+  "title": { "zh": "示例公告标题", "en": "Example announcement title" },
+  "body": {
+    "zh": "把 enabled 改成 true 并修改 id，客户端就会在下次启动时弹出这条公告。",
+    "en": "Set enabled to true and change the id, and clients will show this on next launch."
+  },
+  "url": "https://github.com/ZenithLiteAura/Pho_Community/releases",
+  "startAt": "",
+  "endAt": "",
+  "minVersion": "",
+  "maxVersion": "",
+  "once": true
+}

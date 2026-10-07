@@ -892,4 +892,32 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get autoCheckUpdateDesc => '启动后自动在 GitHub 上检查发行版本，有新版时弹窗提示';
+
+  @override
+  String get announcementTitle => '公告';
+
+  @override
+  String get announcementLevelInfo => '通知';
+
+  @override
+  String get announcementLevelWarning => '提醒';
+
+  @override
+  String get announcementLevelCritical => '重要';
+
+  @override
+  String get announcementCriticalHint => '该公告为重要提醒，请点击下方按钮确认。';
+
+  @override
+  String get announcementGoTo => '前往查看';
+
+  @override
+  String get announcementOk => '我知道了';
+
+  @override
+  String get announcementCheck => '启动时检查公告';
+
+  @override
+  String get announcementCheckDesc =>
+      '启动时从 GitHub 读取最新公告，命中就提示（不消耗 GitHub API 额度）';
 }

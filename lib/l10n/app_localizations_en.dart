@@ -926,4 +926,33 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get autoCheckUpdateDesc =>
       'Check GitHub for a newer release at startup and notify you';
+
+  @override
+  String get announcementTitle => 'Announcement';
+
+  @override
+  String get announcementLevelInfo => 'Notice';
+
+  @override
+  String get announcementLevelWarning => 'Warning';
+
+  @override
+  String get announcementLevelCritical => 'Important';
+
+  @override
+  String get announcementCriticalHint =>
+      'This is an important notice - please confirm with the button below.';
+
+  @override
+  String get announcementGoTo => 'Open';
+
+  @override
+  String get announcementOk => 'Got it';
+
+  @override
+  String get announcementCheck => 'Check announcements at startup';
+
+  @override
+  String get announcementCheckDesc =>
+      'Reads the latest announcement from GitHub at startup (uses no GitHub API quota)';
 }

@@ -1837,6 +1837,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Check GitHub for a newer release at startup and notify you'**
   String get autoCheckUpdateDesc;
+
+  /// No description provided for @announcementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement'**
+  String get announcementTitle;
+
+  /// No description provided for @announcementLevelInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice'**
+  String get announcementLevelInfo;
+
+  /// No description provided for @announcementLevelWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get announcementLevelWarning;
+
+  /// No description provided for @announcementLevelCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Important'**
+  String get announcementLevelCritical;
+
+  /// No description provided for @announcementCriticalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This is an important notice - please confirm with the button below.'**
+  String get announcementCriticalHint;
+
+  /// No description provided for @announcementGoTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get announcementGoTo;
+
+  /// No description provided for @announcementOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get announcementOk;
+
+  /// No description provided for @announcementCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check announcements at startup'**
+  String get announcementCheck;
+
+  /// No description provided for @announcementCheckDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Reads the latest announcement from GitHub at startup (uses no GitHub API quota)'**
+  String get announcementCheckDesc;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:img_syncer/app/state/announcement.dart';
 import 'package:img_syncer/app/state/community_info.dart';
 import 'package:img_syncer/app/state/update_checker.dart';
 import 'package:img_syncer/app/state/global.dart';
@@ -24,6 +25,9 @@ class _SettingsAdvancedPageState extends State<SettingsAdvancedPage> {
   /// true = 已关闭「启动时自动检查更新」。
   bool _disableAutoUpdateCheck = false;
 
+  /// true = 已关闭「启动时检查公告」。
+  bool _disableAnnouncementCheck = false;
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +41,8 @@ class _SettingsAdvancedPageState extends State<SettingsAdvancedPage> {
       _disableStartupNotice = prefs.getBool(startupNoticePrefKey) ?? false;
       _disableAutoUpdateCheck =
           prefs.getBool(autoUpdateCheckPrefKey) ?? false;
+      _disableAnnouncementCheck =
+          prefs.getBool(announcementCheckPrefKey) ?? false;
     });
   }
 
@@ -77,6 +83,23 @@ class _SettingsAdvancedPageState extends State<SettingsAdvancedPage> {
                 if (!mounted) return;
                 setState(() {
                   _disableAutoUpdateCheck = !value;
+                });
+              },
+            ),
+          ),
+          Card(
+            child: SwitchListTile(
+              secondary: const Icon(Icons.campaign_outlined, size: 26),
+              title: Text(l10n.announcementCheck),
+              subtitle: Text(l10n.announcementCheckDesc),
+              value: !_disableAnnouncementCheck,
+              onChanged: (value) async {
+                final prefs = await SharedPreferences.getInstance();
+                // 存的是「关闭」标记，默认 false（即默认开启）。
+                await prefs.setBool(announcementCheckPrefKey, !value);
+                if (!mounted) return;
+                setState(() {
+                  _disableAnnouncementCheck = !value;
                 });
               },
             ),
