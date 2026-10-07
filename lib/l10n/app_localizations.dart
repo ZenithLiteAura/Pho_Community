@@ -1891,6 +1891,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reads the latest announcement from GitHub at startup (uses no GitHub API quota)'**
   String get announcementCheckDesc;
+
+  /// No description provided for @startupNoticeHowToDisable.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t want to see this on every launch? Go to Settings → About → Advanced settings and turn on \"Disable startup notice\".'**
+  String get startupNoticeHowToDisable;
 }
 
 class _AppLocalizationsDelegate

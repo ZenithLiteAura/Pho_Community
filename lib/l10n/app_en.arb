@@ -300,5 +300,6 @@
   "announcementGoTo": "Open",
   "announcementOk": "Got it",
   "announcementCheck": "Check announcements at startup",
-  "announcementCheckDesc": "Reads the latest announcement from GitHub at startup (uses no GitHub API quota)"
+  "announcementCheckDesc": "Reads the latest announcement from GitHub at startup (uses no GitHub API quota)",
+  "startupNoticeHowToDisable": "Don't want to see this on every launch? Go to Settings → About → Advanced settings and turn on \"Disable startup notice\"."
 }

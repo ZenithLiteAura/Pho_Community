@@ -920,4 +920,8 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get announcementCheckDesc =>
       '启动时从 GitHub 读取最新公告，命中就提示（不消耗 GitHub API 额度）';
+
+  @override
+  String get startupNoticeHowToDisable =>
+      '不想每次启动都看到？到「设置 → 应用信息 → 高级设置」打开「关闭启动前弹窗」即可。';
 }

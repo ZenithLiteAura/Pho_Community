@@ -42,6 +42,9 @@ void main() {
     // 弹窗内展示原作者与仓库链接
     expect(find.text(originalAuthor), findsOneWidget);
     expect(find.text(originalAuthorRepo), findsOneWidget);
+
+    // 弹窗内直接给出「如何关闭它」的指引，用户不用去猜设置在哪一层
+    expect(find.textContaining('关闭启动前弹窗'), findsOneWidget);
   });
 
   testWidgets('10 秒内点击遮罩无法关闭弹窗', (tester) async {

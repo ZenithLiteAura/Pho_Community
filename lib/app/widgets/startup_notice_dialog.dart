@@ -162,7 +162,16 @@ class _StartupNoticeDialogState extends State<StartupNoticeDialog> {
                   label: Text(l10n.openInBrowser),
                 ),
               ),
-              const SizedBox(height: AppSpacing.xs),
+              const Divider(height: AppSpacing.lg),
+              // 用户此刻正对着这个弹窗，把「不想每次都看到」的关闭方式直接写在这里，
+              // 省得他们去猜设置在哪一层。
+              Text(
+                l10n.startupNoticeHowToDisable,
+                style: textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 _canClose
                     ? l10n.startupNoticeCanCloseNow
