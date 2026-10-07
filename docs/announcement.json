@@ -1,19 +1,13 @@
 {
-  "enabled": true,
-  "id": "notice-2026-002",
-  "level": "critical",
+  "enabled": false,
+  "id": "notice-2026-",
+  "level": "info",
   "title": {
-    "zh": "感谢大家的使用！",
+    "zh": "",
     "en": ""
   },
   "body": {
-    "zh": "感谢大家的使用！",
+    "zh": "",
     "en": ""
-  },
-  "url": "",
-  "startAt": "",
-  "endAt": "",
-  "minVersion": "",
-  "maxVersion": "",
-  "once": true
+  }
 }
