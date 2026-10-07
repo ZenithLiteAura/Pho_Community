@@ -126,26 +126,28 @@ void main() {
   });
 
   group('公告源配置', () {
-    test('五源齐备且顺序为 raw -> gcore -> github.com -> jsDelivr -> Pages', () {
+    test('五源齐备且顺序为 raw -> Pages -> github.com -> gcore -> cdn', () {
       expect(announcementSources.length, 5);
       expect(announcementSources[0], contains('raw.githubusercontent.com'));
-      expect(announcementSources[1], contains('gcore.jsdelivr.net'));
+      expect(announcementSources[1], contains('github.io'));
       expect(announcementSources[2], contains('github.com/'));
-      expect(announcementSources[3], contains('cdn.jsdelivr.net'));
-      expect(announcementSources[4], contains('github.io'));
-      // 带长缓存、容易拿到旧内容的 cdn.jsdelivr 必须排在 gcore 之后
-      expect(
-        announcementSources.indexOf('https://cdn.jsdelivr.net/gh/'
-            'ZenithLiteAura/Pho_Community@main/docs/announcement.json'),
-        greaterThan(announcementSources.indexOf(
-            'https://gcore.jsdelivr.net/gh/'
-            'ZenithLiteAura/Pho_Community@main/docs/announcement.json')),
-      );
+      expect(announcementSources[3], contains('gcore.jsdelivr.net'));
+      expect(announcementSources[4], contains('cdn.jsdelivr.net'));
+      // 实测：Pages 国内可达且新鲜，必须排在两条 jsDelivr 兜底源之前；
+      // 且 github.com/.../raw 会 302 到被墙的 raw 域名，所以排在 Pages 之后。
+      final pages = announcementSources.indexOf(
+          'https://zenithliteaura.github.io/Pho_Community/announcement.json');
+      final gcore = announcementSources.indexOf('https://gcore.jsdelivr.net/gh/'
+          'ZenithLiteAura/Pho_Community@main/docs/announcement.json');
+      final cdn = announcementSources.indexOf('https://cdn.jsdelivr.net/gh/'
+          'ZenithLiteAura/Pho_Community@main/docs/announcement.json');
+      expect(pages, lessThan(gcore));
+      expect(gcore, lessThan(cdn));
       // 前四条指向仓库里的 docs/ 目录；Pages 选 /docs 作为站点根目录，URL 里没有这一层。
-      for (var i = 0; i < 4; i++) {
+      for (final i in [0, 2, 3, 4]) {
         expect(announcementSources[i], endsWith('/docs/announcement.json'));
       }
-      expect(announcementSources[4], endsWith('/announcement.json'));
+      expect(announcementSources[1], endsWith('/announcement.json'));
     });
   });
 }

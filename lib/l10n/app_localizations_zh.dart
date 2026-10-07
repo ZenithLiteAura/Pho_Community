@@ -1053,4 +1053,20 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get devSectionStartupNotice => '启动弹窗（版权与致谢）';
+
+  @override
+  String get devCustomProbe => '自定义 URL 探测';
+
+  @override
+  String get devCustomProbeDesc =>
+      '在自己的网络上试候选镜像（statically / githack / 自建反代…），看是否可用、内容是否最新';
+
+  @override
+  String get devProbe => '探测';
+
+  @override
+  String get devFinalChoice => '最终采用';
+
+  @override
+  String get devWinnerTag => '采用这条';
 }

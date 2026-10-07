@@ -344,5 +344,10 @@
   "devLoadIntoForm": "载入表单",
   "devRestore": "回滚到此版本",
   "devManagerNote": "Token 只存本机；发布即提交 docs/announcement.json",
-  "devSectionStartupNotice": "启动弹窗（版权与致谢）"
+  "devSectionStartupNotice": "启动弹窗（版权与致谢）",
+  "devCustomProbe": "自定义 URL 探测",
+  "devCustomProbeDesc": "在自己的网络上试候选镜像（statically / githack / 自建反代…），看是否可用、内容是否最新",
+  "devProbe": "探测",
+  "devFinalChoice": "最终采用",
+  "devWinnerTag": "采用这条"
 }

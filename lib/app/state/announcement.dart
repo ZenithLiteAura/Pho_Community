@@ -14,21 +14,21 @@ const String announcementSeenIdsKey = 'announcement_seen_ids';
 /// 公告源，按优先级依次尝试。
 ///
 /// 顺序的取舍（实测结论写在每条后面）：
-/// 1. `raw.githubusercontent.com` —— push 即生效，缓存仅 5 分钟，内容最新；
-/// 2. `gcore.jsdelivr.net` —— jsDelivr 的另一组节点，缓存比 cdn 主域名新，国内可达性好；
-/// 3. `github.com/.../raw/main/...` —— 走 GitHub 主域，raw 域名被污染时往往仍可访问；
-/// 4. `cdn.jsdelivr.net` —— 国内可达性最好，但 `@main` 的分支解析最长会被缓存 12 小时，
-///    容易拿到旧版本，所以排在 gcore 之后；
-/// 5. GitHub Pages —— 需要在仓库 Settings → Pages 里开一次；未开启时是 404，自动跳过。
+/// 1. `raw.githubusercontent.com` —— push 即生效，缓存仅 5 分钟，内容最新；国内常被 reset；
+/// 2. GitHub Pages —— 实测在国内可达且内容新鲜（2026-10-07 手机实测 200 / 369ms）；
+/// 3. `github.com/.../raw/main/...` —— 会 302 到 raw 域名，国内同样不可达，故排在 Pages 之后；
+/// 4. `gcore.jsdelivr.net` —— 国内可达性好，但 `@main` 的**分支解析**会被缓存（最长 12 小时），
+///    实测会长期停在旧提交，且 purge 清不掉，因此降为兜底；
+/// 5. `cdn.jsdelivr.net` —— 同上，缓存更久。
 ///
-/// 每次启动会**并发**请求全部源，再按上述优先级取第一个「返回了合法 JSON」的结果：
-/// 既不会因为某条源被墙而卡住启动，也不会让带长缓存的源盖掉最新内容。
+/// 每次启动会**并发**请求全部源，再交给 [selectNewestAnnouncement]：
+/// 优先按 `updatedAt` 取最新的一份，只有在所有源都没带该字段时才退回上面的顺序。
 const List<String> announcementSources = <String>[
   'https://raw.githubusercontent.com/ZenithLiteAura/Pho_Community/main/docs/announcement.json',
-  'https://gcore.jsdelivr.net/gh/ZenithLiteAura/Pho_Community@main/docs/announcement.json',
-  'https://github.com/ZenithLiteAura/Pho_Community/raw/main/docs/announcement.json',
-  'https://cdn.jsdelivr.net/gh/ZenithLiteAura/Pho_Community@main/docs/announcement.json',
   'https://zenithliteaura.github.io/Pho_Community/announcement.json',
+  'https://github.com/ZenithLiteAura/Pho_Community/raw/main/docs/announcement.json',
+  'https://gcore.jsdelivr.net/gh/ZenithLiteAura/Pho_Community@main/docs/announcement.json',
+  'https://cdn.jsdelivr.net/gh/ZenithLiteAura/Pho_Community@main/docs/announcement.json',
 ];
 
 /// 公告级别。`critical` 为强制展示：点遮罩与返回键都无法关闭，只能点按钮确认。
@@ -347,6 +347,21 @@ Future<AnnouncementFetchReport> fetchAnnouncementReport({
 /// 这样 CDN 分支缓存里的旧副本会被 raw / Pages 上的新副本自动压过。
 AnnouncementFetchReport selectNewestAnnouncement(
     List<AnnouncementFetch> results) {
+  final index = selectNewestIndex(results);
+  if (index < 0) {
+    return const AnnouncementFetchReport(anySourceUsable: false);
+  }
+  return AnnouncementFetchReport(
+    anySourceUsable: true,
+    announcement: results[index].announcement,
+  );
+}
+
+/// 与 [selectNewestAnnouncement] 同一套判决，但返回**被采用的源下标**。
+///
+/// 开发者选项用它标出「最终采用哪一条」，避免把逐源结果误读成「最终会弹哪条」。
+/// 返回 -1 表示没有任何可用源。
+int selectNewestIndex(List<AnnouncementFetch> results) {
   var bestIndex = -1;
   DateTime? bestAt;
   for (var i = 0; i < results.length; i++) {
@@ -363,13 +378,7 @@ AnnouncementFetchReport selectNewestAnnouncement(
       bestAt = at;
     }
   }
-  if (bestIndex < 0) {
-    return const AnnouncementFetchReport(anySourceUsable: false);
-  }
-  return AnnouncementFetchReport(
-    anySourceUsable: true,
-    announcement: results[bestIndex].announcement,
-  );
+  return bestIndex;
 }
 
 Future<AnnouncementFetch> _fetchOne(String url, Duration timeout) async {

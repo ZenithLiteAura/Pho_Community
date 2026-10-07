@@ -1093,4 +1093,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get devSectionStartupNotice => 'Startup notice (copyright)';
+
+  @override
+  String get devCustomProbe => 'Probe a custom URL';
+
+  @override
+  String get devCustomProbeDesc =>
+      'Try candidate mirrors on your own network (statically / githack / self-hosted proxy…) and see whether they are usable and up to date';
+
+  @override
+  String get devProbe => 'Probe';
+
+  @override
+  String get devFinalChoice => 'Selected source';
+
+  @override
+  String get devWinnerTag => 'selected';
 }

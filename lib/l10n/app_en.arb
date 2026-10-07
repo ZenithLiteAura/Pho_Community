@@ -344,5 +344,10 @@
   "devLoadIntoForm": "Load into form",
   "devRestore": "Restore this version",
   "devManagerNote": "The token stays on this device; publishing commits docs/announcement.json",
-  "devSectionStartupNotice": "Startup notice (copyright)"
+  "devSectionStartupNotice": "Startup notice (copyright)",
+  "devCustomProbe": "Probe a custom URL",
+  "devCustomProbeDesc": "Try candidate mirrors on your own network (statically / githack / self-hosted proxy…) and see whether they are usable and up to date",
+  "devProbe": "Probe",
+  "devFinalChoice": "Selected source",
+  "devWinnerTag": "selected"
 }

@@ -2155,6 +2155,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Startup notice (copyright)'**
   String get devSectionStartupNotice;
+
+  /// No description provided for @devCustomProbe.
+  ///
+  /// In en, this message translates to:
+  /// **'Probe a custom URL'**
+  String get devCustomProbe;
+
+  /// No description provided for @devCustomProbeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Try candidate mirrors on your own network (statically / githack / self-hosted proxy…) and see whether they are usable and up to date'**
+  String get devCustomProbeDesc;
+
+  /// No description provided for @devProbe.
+  ///
+  /// In en, this message translates to:
+  /// **'Probe'**
+  String get devProbe;
+
+  /// No description provided for @devFinalChoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected source'**
+  String get devFinalChoice;
+
+  /// No description provided for @devWinnerTag.
+  ///
+  /// In en, this message translates to:
+  /// **'selected'**
+  String get devWinnerTag;
 }
 
 class _AppLocalizationsDelegate

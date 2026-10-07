@@ -30,6 +30,7 @@ class AnnouncementSourceProbe {
     this.announcement,
     this.error,
     this.snippet,
+    this.updatedAt,
   });
 
   final String url;
@@ -47,10 +48,17 @@ class AnnouncementSourceProbe {
   /// 返回体前若干字符，便于肉眼确认拿到的是哪一版。
   final String? snippet;
 
+  /// 该源 JSON 里的 updatedAt（即使 enabled=false 也照读）。
+  final DateTime? updatedAt;
+
   bool get usable => jsonOk;
 
   /// 这条源会不会让客户端弹公告。
   bool get wouldNotify => announcement != null;
+
+  /// 转成生产逻辑用的结构，保证「最终采用哪条」与客户端判决完全一致。
+  AnnouncementFetch toFetch() =>
+      AnnouncementFetch(ok: usable, announcement: announcement, updatedAt: updatedAt);
 }
 
 /// 依次探测全部公告源（并发请求，但分别记录状态码与耗时）。
@@ -58,12 +66,16 @@ Future<List<AnnouncementSourceProbe>> probeAnnouncementSources({
   Duration timeout = const Duration(seconds: 8),
 }) async {
   final futures = announcementSources
-      .map((url) => _probeOne(url, timeout))
+      .map((url) => probeAnnouncementSource(url, timeout: timeout))
       .toList(growable: false);
   return Future.wait(futures);
 }
 
-Future<AnnouncementSourceProbe> _probeOne(String url, Duration timeout) async {
+/// 探测单个 URL（开发者选项里的「自定义 URL 探测」也用它）。
+Future<AnnouncementSourceProbe> probeAnnouncementSource(
+  String url, {
+  Duration timeout = const Duration(seconds: 8),
+}) async {
   final r = await fetchTextDetailed(url, timeout: timeout);
   final body = r.body;
   if (body == null) {
@@ -96,6 +108,10 @@ Future<AnnouncementSourceProbe> _probeOne(String url, Duration timeout) async {
       snippet: snippet,
     );
   }
+  DateTime? updatedAt;
+  final rawUpdatedAt = (decoded['updatedAt'] ?? '').toString();
+  if (rawUpdatedAt.isNotEmpty) updatedAt = DateTime.tryParse(rawUpdatedAt);
+
   return AnnouncementSourceProbe(
     url: url,
     status: r.status,
@@ -103,6 +119,7 @@ Future<AnnouncementSourceProbe> _probeOne(String url, Duration timeout) async {
     jsonOk: true,
     announcement: Announcement.parse(body),
     snippet: snippet,
+    updatedAt: updatedAt,
   );
 }
 
