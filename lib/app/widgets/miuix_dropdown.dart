@@ -415,21 +415,7 @@ class _PanelSurface extends StatelessWidget {
               // 面板是直接挂在 dialog route 上的，InkWell 需要一个 Material 祖先
               child: Material(
                 type: MaterialType.transparency,
-                child: Listener(
-                // 跟手滑选：按住上下滑，滑到哪条哪条高亮，松手即选中
-                onPointerDown: (event) {
-                  final i = indexAt(event.position);
-                  if (i != null) onHotChanged(i);
-                },
-                onPointerMove: (event) {
-                  final i = indexAt(event.position);
-                  if (i != null) onHotChanged(i);
-                },
-                onPointerUp: (event) {
-                  final i = indexAt(event.position);
-                  onHotChanged(null);
-                  if (i != null && i < entries.length) onSelect(entries[i]);
-                },
+                // 只响应点击，不做拖拽/跟手滑选
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -546,7 +532,6 @@ class _PanelSurface extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                   ],
-                ),
                 ),
               ),
             ),

@@ -71,11 +71,12 @@ Future<T?> showMiuixDialog<T>({
   bool barrierDismissible = true,
   String? barrierLabel,
   bool useRootNavigator = true,
-  bool dragToDismiss = true,
+  // 默认关闭拖拽：这类弹层不需要「拖着关」，裸指针拖拽也容易和内容手势打架
+  bool dragToDismiss = false,
   bool showGrip = false,
   bool wrapInGlass = true,
   bool bottomAligned = false,
-  bool pointerDrag = true,
+  bool pointerDrag = false,
   double? maxWidth,
   RouteSettings? routeSettings,
 }) {
@@ -204,6 +205,8 @@ class MiuixOverlayHostState<T> extends State<MiuixOverlayHost<T>>
           ? MiuixGlassSurface(
               enableBlur: _settled,
               corners: corners,
+              // 浮层不再画「凝光跟随手指」：观感更干净，也少一层随手指重绘
+              enableBloom: false,
               child: content,
             )
           : content,

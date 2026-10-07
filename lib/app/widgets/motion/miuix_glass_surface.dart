@@ -22,6 +22,7 @@ class MiuixGlassSurface extends StatefulWidget {
     this.corners,
     this.blurSigma = 20,
     this.enableBlur = true,
+    this.enableBloom = true,
   });
 
   final Widget child;
@@ -33,6 +34,9 @@ class MiuixGlassSurface extends StatefulWidget {
 
   /// 是否启用背景模糊。展开/拖拽过程中应传 false。
   final bool enableBlur;
+
+  /// 是否画「凝光跟随手指」，默认开；浮层里关掉，观感更干净。
+  final bool enableBloom;
 
   @override
   State<MiuixGlassSurface> createState() => _MiuixGlassSurfaceState();
@@ -83,7 +87,7 @@ class _MiuixGlassSurfaceState extends State<MiuixGlassSurface> {
       );
     }
 
-    if (motionController.bloomEnabled) {
+    if (widget.enableBloom && motionController.bloomEnabled) {
       surface = Stack(
         children: <Widget>[
           surface,
