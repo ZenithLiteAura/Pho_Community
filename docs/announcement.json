@@ -1,15 +1,14 @@
 {
-  "_readme": "公告文件。改完直接 push 到 main 即可生效：raw 源约 5 分钟、GitHub Pages 约 10 分钟、jsDelivr 缓存 12 小时（可用 https://purge.jsdelivr.net/gh/ZenithLiteAura/Pho_Community@main/docs/announcement.json 主动刷新）。字段说明见 docs/公告使用说明.md。",
   "enabled": true,
-  "id": "2026-10-07-close-startup-notice",
+  "id": "notice-2026-001",
   "level": "info",
   "title": {
-    "zh": "如何关闭启动时的版权弹窗",
-    "en": "How to turn off the startup notice"
+    "zh": "欢迎使用！！！",
+    "en": ""
   },
   "body": {
-    "zh": "进入「设置 → 应用信息 → 高级设置」，把「关闭启动前弹窗」打开即可，之后每次启动都不再显示这个版权弹窗。\n同一个页面还可以关闭「启动时检查公告」和「启动时自动检查更新」。",
-    "en": "Open Settings → About → Advanced settings and switch on “Disable startup notice” — it will stop appearing on every launch.\nThe same page also lets you turn off “Check announcements at startup” and “Check for updates at startup”."
+    "zh": "欢迎使用！！！",
+    "en": ""
   },
   "url": "",
   "startAt": "",
