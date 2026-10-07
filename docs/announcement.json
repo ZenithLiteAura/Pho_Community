@@ -1,20 +1,20 @@
 {
   "enabled": true,
-  "id": "notice-2026-003",
-  "level": "critical",
+  "id": "notice-2026-",
+  "updatedAt": "2026-10-07T15:45:27.537822Z",
+  "level": "info",
   "title": {
-    "zh": "感谢大家的支持✊",
-    "en": "Thank you all for your support✊"
+    "zh": "欢迎使用",
+    "en": "Welcome to use it"
   },
   "body": {
-    "zh": "感谢大家的支持✊",
-    "en": "Thank you all for your support✊"
+    "zh": "欢迎使用 Pho 社区版\n这是一个无服务端、无账号的照片浏览与同步应用：照片按目录保存在你自己的存储里，支持 SMB / WebDAV / NFS 等后端。本仓库为开源社区版，当前提供 Android APK。遇到问题欢迎开 Issue，试用前请先备份照片。",
+    "en": "Welcome to Pho Community Edition\nThis is a serverless, accountless photo browsing and syncing app: photos are stored in your own storage by directory, supporting backends such as SMB / WebDAV / NFS. This repository is the open-source community edition, currently providing Android APK. Feel free to open an Issue if you encounter any problems, please back up your photos before trying it out."
   },
   "url": "",
   "startAt": "",
   "endAt": "",
   "minVersion": "",
   "maxVersion": "",
-  "once": true,
-  "updatedAt": "2026-10-07T13:44:41.174Z"
+  "once": true
 }
