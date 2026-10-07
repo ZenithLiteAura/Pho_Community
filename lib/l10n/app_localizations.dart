@@ -1943,7 +1943,7 @@ abstract class AppLocalizations {
   /// No description provided for @devSectionAnnouncement.
   ///
   /// In en, this message translates to:
-  /// **'Announcement tools'**
+  /// **'Announcement'**
   String get devSectionAnnouncement;
 
   /// No description provided for @devProbeSources.
@@ -2077,6 +2077,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Lock developer options'**
   String get devLockAgain;
+
+  /// No description provided for @devAnnouncementPageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Test fetching · test the popup · announcement manager'**
+  String get devAnnouncementPageDesc;
+
+  /// No description provided for @devTestPopup.
+  ///
+  /// In en, this message translates to:
+  /// **'Test the announcement popup'**
+  String get devTestPopup;
+
+  /// No description provided for @devManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement manager'**
+  String get devManager;
+
+  /// No description provided for @devManagerDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish / take down / restore from history'**
+  String get devManagerDesc;
+
+  /// No description provided for @devManagerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage announcements'**
+  String get devManagerTitle;
+
+  /// No description provided for @devSectionRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get devSectionRead;
+
+  /// No description provided for @devCurrentContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current content on GitHub'**
+  String get devCurrentContent;
+
+  /// No description provided for @devHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get devHistory;
+
+  /// No description provided for @devHistoryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A GitHub token is required'**
+  String get devHistoryHint;
+
+  /// No description provided for @devLoadIntoForm.
+  ///
+  /// In en, this message translates to:
+  /// **'Load into form'**
+  String get devLoadIntoForm;
+
+  /// No description provided for @devRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore this version'**
+  String get devRestore;
+
+  /// No description provided for @devManagerNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The token stays on this device; publishing commits docs/announcement.json'**
+  String get devManagerNote;
+
+  /// No description provided for @devSectionStartupNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Startup notice (copyright)'**
+  String get devSectionStartupNotice;
 }
 
 class _AppLocalizationsDelegate

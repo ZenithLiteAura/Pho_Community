@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pho 社区版 · 无服务端的照片浏览与同步</title>
+<meta name="description" content="Pho 社区版：无服务端的照片浏览与同步应用。下载最新版本、查看公告与使用说明。">
+<style>
+  :root{
+    --bg:#f2f2f7; --card:#ffffff; --fg:#1a1c1f; --muted:#6b7280;
+    --primary:#0058bc; --line:#e2e2e7; --warn:#b45309; --danger:#ba1a1a;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#111214; --card:#1b1d21; --fg:#eef0f4; --muted:#9aa1ad;
+           --primary:#adc6ff; --line:#2a2d33; --warn:#fbbf24; --danger:#ffb4ab; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;}
+  .wrap{max-width:760px;margin:0 auto;padding:32px 20px 64px}
+  .hero{display:flex;align-items:center;gap:16px;margin-bottom:8px}
+  .hero img{width:72px;height:72px;border-radius:18px}
+  h1{font-size:26px;margin:0}
+  .sub{color:var(--muted);margin:4px 0 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+        padding:18px 20px;margin:16px 0}
+  h2{font-size:15px;letter-spacing:.06em;color:var(--muted);
+     margin:0 0 10px;font-weight:600;text-transform:uppercase}
+  a{color:var(--primary)}
+  .btn{display:inline-block;background:var(--primary);color:#fff;text-decoration:none;
+       padding:12px 20px;border-radius:12px;font-weight:600;margin:6px 8px 6px 0}
+  @media (prefers-color-scheme: dark){ .btn{color:#00214d} }
+  .ghost{background:transparent;color:var(--primary);border:1px solid var(--line)}
+  ol,ul{padding-left:22px;margin:8px 0}
+  code{background:rgba(127,127,127,.15);padding:2px 6px;border-radius:6px;font-size:14px}
+  .muted{color:var(--muted);font-size:14px}
+  .notice-title{font-weight:600;margin:0 0 6px}
+  .lv{font-size:12px;letter-spacing:.06em;font-weight:600}
+  .lv-info{color:var(--primary)} .lv-warning{color:var(--warn)} .lv-critical{color:var(--danger)}
+  .notice-body{white-space:pre-wrap;margin:6px 0}
+  footer{color:var(--muted);font-size:13px;margin-top:32px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <img src="pho_icon.png" alt="Pho">
+    <div>
+      <h1>Pho 社区版</h1>
+      <p class="sub">无服务端的照片浏览与同步应用 · 不建数据库、不需要账号</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>下载</h2>
+    <a class="btn" href="https://github.com/ZenithLiteAura/Pho_Community/releases/latest">下载最新版 APK</a>
+    <a class="btn ghost" href="https://github.com/ZenithLiteAura/Pho_Community/releases">全部版本 / 更新日志</a>
+    <p class="muted" id="verline">Android · 安装包见 Releases 页（点上面的按钮会自动跳到最新版本）</p>
+  </div>
+
+  <div class="card" id="notice-card" hidden>
+    <h2>公告</h2>
+    <p class="lv" id="notice-lv"></p>
+    <p class="notice-title" id="notice-title"></p>
+    <p class="notice-body" id="notice-body"></p>
+    <p id="notice-link"></p>
+  </div>
+
+  <div class="card">
+    <h2>如何关闭启动时的版权弹窗</h2>
+    <ol>
+      <li>打开应用，进入 <code>设置</code></li>
+      <li>进入 <code>应用信息</code></li>
+      <li>进入 <code>高级设置</code></li>
+      <li>打开 <code>关闭启动前弹窗</code>（从下次启动起生效）</li>
+    </ol>
+    <p class="muted">同一个页面还能关闭「启动时检查公告」和「启动时自动检查更新」。</p>
+  </div>
+
+  <div class="card">
+    <h2>关于</h2>
+    <ul>
+      <li>原作者：<a href="https://github.com/fregie/pho">fregie</a>（本项目基于其开源作品）</li>
+      <li>社区发行版维护：<a href="https://github.com/ZenithLiteAura/Pho_Community">ZenithLiteAura / Pho_Community</a></li>
+      <li>许可证：<a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU GPL-3.0</a></li>
+    </ul>
+    <p class="muted">如果这个应用对你有帮助，建议前往原作者的仓库 Star 或反馈问题，支持原作者继续维护。</p>
+  </div>
+
+  <p class="muted" style="text-align:center">
+    <a href="./公告使用说明.md">公告使用说明</a>
+  </p>
+
+  <footer>© 2026 fregie（原作者）· GPL-3.0 · 社区发行版由 ZenithLiteAura 维护</footer>
+</div>
+
+<script>
+(function () {
+  var zh = (navigator.language || 'zh').toLowerCase().indexOf('zh') === 0;
+  var levels = {
+    info:     { zh: '通知', en: 'Notice' },
+    warning:  { zh: '提醒', en: 'Warning' },
+    critical: { zh: '重要', en: 'Important' }
+  };
+  function pick(obj) {
+    if (!obj) return '';
+    if (typeof obj === 'string') return obj;
+    return (zh ? (obj.zh || obj.en) : (obj.en || obj.zh)) || '';
+  }
+  fetch('./announcement.json', { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (a) {
+      if (!a || a.enabled !== true) return;
+      var now = Date.now();
+      if (a.startAt && now < Date.parse(a.startAt)) return;
+      if (a.endAt && now > Date.parse(a.endAt)) return;
+      var lv = levels[a.level] || levels.info;
+      document.getElementById('notice-lv').textContent = zh ? lv.zh : lv.en;
+      document.getElementById('notice-lv').className = 'lv lv-' + (a.level || 'info');
+      document.getElementById('notice-title').textContent = pick(a.title);
+      document.getElementById('notice-body').textContent = pick(a.body);
+      if (a.url) {
+        var p = document.getElementById('notice-link');
+        var link = document.createElement('a');
+        link.href = a.url;
+        link.textContent = zh ? '查看详情 →' : 'Open →';
+        p.appendChild(link);
+      }
+      document.getElementById('notice-card').hidden = false;
+    })
+    .catch(function () { /* 公告读不到就不显示，不影响其它内容 */ });
+})();
+</script>
+</body>
+</html>

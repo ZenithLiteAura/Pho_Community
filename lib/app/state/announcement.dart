@@ -205,6 +205,97 @@ class LocalizedText {
   }
 }
 
+/// 全部源的汇总结果：区分「源全挂」和「拿到了但没开启」，开发者选项要据此给出原因。
+@immutable
+class AnnouncementFetchReport {
+  const AnnouncementFetchReport({
+    required this.anySourceUsable,
+    this.announcement,
+  });
+
+  /// 是否至少有一条源返回了合法 JSON。
+  final bool anySourceUsable;
+
+  /// 解析出的公告（enabled 非 true 时为 null）。
+  final Announcement? announcement;
+}
+
+/// 公告判定原因（开发者选项里用来解释「为什么没弹」）。
+enum AnnouncementGateReason {
+  /// 会弹。
+  willShow,
+
+  /// 所有源都不可用（网络/被墙/404）。
+  allSourcesFailed,
+
+  /// 源可用，但云端 enabled 不是 true（没有正在生效的公告）。
+  notEnabled,
+
+  /// 不在 startAt / endAt 生效窗口内。
+  outsideWindow,
+
+  /// 与当前版本的 minVersion / maxVersion 不匹配。
+  versionMismatch,
+
+  /// 该 id 已读过（once=true）。
+  alreadySeen,
+}
+
+/// 判定结果。
+@immutable
+class AnnouncementGateResult {
+  const AnnouncementGateResult({required this.willShow, required this.reason, this.announcement});
+
+  final bool willShow;
+  final AnnouncementGateReason reason;
+  final Announcement? announcement;
+}
+
+/// 公告判定门：把「真实会不会弹」的判定抽成纯逻辑，便于单测与开发者选项复用。
+class AnnouncementGate {
+  AnnouncementGate._();
+
+  static AnnouncementGateResult evaluate({
+    required Announcement? announcement,
+    required bool anySourceUsable,
+    required DateTime now,
+    required String appVersion,
+    required Set<String> seenIds,
+  }) {
+    if (!anySourceUsable) {
+      return const AnnouncementGateResult(
+          willShow: false, reason: AnnouncementGateReason.allSourcesFailed);
+    }
+    final a = announcement;
+    if (a == null) {
+      return const AnnouncementGateResult(
+          willShow: false, reason: AnnouncementGateReason.notEnabled);
+    }
+
+    final t = now.toUtc();
+    final start = a.startAt?.toUtc();
+    if (start != null && t.isBefore(start)) {
+      return AnnouncementGateResult(
+          willShow: false, reason: AnnouncementGateReason.outsideWindow, announcement: a);
+    }
+    final end = a.endAt?.toUtc();
+    if (end != null && t.isAfter(end)) {
+      return AnnouncementGateResult(
+          willShow: false, reason: AnnouncementGateReason.outsideWindow, announcement: a);
+    }
+    if (!a.matches(now: now, appVersion: appVersion)) {
+      return AnnouncementGateResult(
+          willShow: false, reason: AnnouncementGateReason.versionMismatch, announcement: a);
+    }
+    if (a.once && seenIds.contains(a.id)) {
+      return AnnouncementGateResult(
+          willShow: false, reason: AnnouncementGateReason.alreadySeen, announcement: a);
+    }
+    return AnnouncementGateResult(
+        willShow: true, reason: AnnouncementGateReason.willShow, announcement: a);
+  }
+}
+
 /// 某个公告源的返回值：区分「没拿到」（failed）和「拿到了但是关闭状态」（ok + null）。
 @immutable
 class AnnouncementFetch {
@@ -220,13 +311,26 @@ class AnnouncementFetch {
 Future<Announcement?> fetchAnnouncement({
   Duration timeout = const Duration(seconds: 8),
 }) async {
+  final report = await fetchAnnouncementReport(timeout: timeout);
+  return report.announcement;
+}
+
+/// 同 [fetchAnnouncement]，但保留「是否至少有一条源可用」的信息。
+Future<AnnouncementFetchReport> fetchAnnouncementReport({
+  Duration timeout = const Duration(seconds: 8),
+}) async {
   final results = await Future.wait(
     announcementSources.map((url) => _fetchOne(url, timeout)),
   );
   for (final r in results) {
-    if (r.ok) return r.announcement;
+    if (r.ok) {
+      return AnnouncementFetchReport(
+        anySourceUsable: true,
+        announcement: r.announcement,
+      );
+    }
   }
-  return null;
+  return const AnnouncementFetchReport(anySourceUsable: false);
 }
 
 Future<AnnouncementFetch> _fetchOne(String url, Duration timeout) async {

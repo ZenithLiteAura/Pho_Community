@@ -309,7 +309,7 @@
   "devPasswordHint": "Enter password",
   "devPasswordWrong": "Wrong password",
   "devPasswordConfirm": "OK",
-  "devSectionAnnouncement": "Announcement tools",
+  "devSectionAnnouncement": "Announcement",
   "devProbeSources": "Test fetching announcements (per source)",
   "devPreviewAnnouncement": "Preview announcement dialog",
   "devResetSeen": "Reset read-announcement records",
@@ -331,5 +331,18 @@
   "devClearAllPrefs": "Clear all local settings",
   "devConfirmClear": "Clear everything? Sign-in, sync progress and every setting will be reset. This cannot be undone.",
   "devCleared": "All local settings cleared",
-  "devLockAgain": "Lock developer options"
+  "devLockAgain": "Lock developer options",
+  "devAnnouncementPageDesc": "Test fetching · test the popup · announcement manager",
+  "devTestPopup": "Test the announcement popup",
+  "devManager": "Announcement manager",
+  "devManagerDesc": "Publish / take down / restore from history",
+  "devManagerTitle": "Manage announcements",
+  "devSectionRead": "Read",
+  "devCurrentContent": "Current content on GitHub",
+  "devHistory": "History",
+  "devHistoryHint": "A GitHub token is required",
+  "devLoadIntoForm": "Load into form",
+  "devRestore": "Restore this version",
+  "devManagerNote": "The token stays on this device; publishing commits docs/announcement.json",
+  "devSectionStartupNotice": "Startup notice (copyright)"
 }

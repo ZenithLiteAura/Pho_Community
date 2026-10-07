@@ -947,7 +947,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get devPasswordConfirm => '确定';
 
   @override
-  String get devSectionAnnouncement => '公告工具';
+  String get devSectionAnnouncement => '公告';
 
   @override
   String get devProbeSources => '测试拉取公告（逐个源）';
@@ -1014,4 +1014,43 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get devLockAgain => '锁定开发者选项';
+
+  @override
+  String get devAnnouncementPageDesc => '测试拉取公告 · 测试弹窗公告 · 公告管理工具';
+
+  @override
+  String get devTestPopup => '测试弹窗公告';
+
+  @override
+  String get devManager => '公告管理工具';
+
+  @override
+  String get devManagerDesc => '发布 / 下线 / 历史版本回滚';
+
+  @override
+  String get devManagerTitle => '公告管理';
+
+  @override
+  String get devSectionRead => '读取';
+
+  @override
+  String get devCurrentContent => '云端当前内容';
+
+  @override
+  String get devHistory => '历史版本';
+
+  @override
+  String get devHistoryHint => '需要 GitHub Token 才能读取';
+
+  @override
+  String get devLoadIntoForm => '载入表单';
+
+  @override
+  String get devRestore => '回滚到此版本';
+
+  @override
+  String get devManagerNote => 'Token 只存本机；发布即提交 docs/announcement.json';
+
+  @override
+  String get devSectionStartupNotice => '启动弹窗（版权与致谢）';
 }

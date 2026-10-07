@@ -983,7 +983,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get devPasswordConfirm => 'OK';
 
   @override
-  String get devSectionAnnouncement => 'Announcement tools';
+  String get devSectionAnnouncement => 'Announcement';
 
   @override
   String get devProbeSources => 'Test fetching announcements (per source)';
@@ -1052,4 +1052,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get devLockAgain => 'Lock developer options';
+
+  @override
+  String get devAnnouncementPageDesc =>
+      'Test fetching · test the popup · announcement manager';
+
+  @override
+  String get devTestPopup => 'Test the announcement popup';
+
+  @override
+  String get devManager => 'Announcement manager';
+
+  @override
+  String get devManagerDesc => 'Publish / take down / restore from history';
+
+  @override
+  String get devManagerTitle => 'Manage announcements';
+
+  @override
+  String get devSectionRead => 'Read';
+
+  @override
+  String get devCurrentContent => 'Current content on GitHub';
+
+  @override
+  String get devHistory => 'History';
+
+  @override
+  String get devHistoryHint => 'A GitHub token is required';
+
+  @override
+  String get devLoadIntoForm => 'Load into form';
+
+  @override
+  String get devRestore => 'Restore this version';
+
+  @override
+  String get devManagerNote =>
+      'The token stays on this device; publishing commits docs/announcement.json';
+
+  @override
+  String get devSectionStartupNotice => 'Startup notice (copyright)';
 }

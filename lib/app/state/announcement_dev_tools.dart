@@ -220,6 +220,124 @@ Future<PublishResult> publishAnnouncement({
   }
 }
 
+/// 一条公告历史（= 一次修改 docs/announcement.json 的提交）。
+@immutable
+class AnnouncementRevision {
+  const AnnouncementRevision({
+    required this.sha,
+    required this.message,
+    this.date,
+    this.author,
+  });
+
+  final String sha;
+  final String message;
+  final String? date;
+  final String? author;
+
+  String get shortSha => sha.length >= 7 ? sha.substring(0, 7) : sha;
+}
+
+/// 历史列表结果。
+@immutable
+class HistoryResult {
+  const HistoryResult({
+    required this.ok,
+    required this.revisions,
+    required this.message,
+  });
+
+  final bool ok;
+  final List<AnnouncementRevision> revisions;
+  final String message;
+}
+
+/// 读取 `docs/announcement.json` 的提交历史（最近 [limit] 次）。
+Future<HistoryResult> fetchAnnouncementHistory({
+  required String token,
+  int limit = 30,
+}) async {
+  if (token.trim().isEmpty) {
+    return const HistoryResult(ok: false, revisions: [], message: '缺少 GitHub Token');
+  }
+  final url = 'https://api.github.com/repos/$phoRepoOwner/$phoRepoName/commits'
+      '?path=$phoAnnouncementPath&per_page=$limit';
+  try {
+    final r = await _ghRequest('GET', url, token: token);
+    if (r.status != 200) {
+      return HistoryResult(
+        ok: false,
+        revisions: const [],
+        message: '读取历史失败（HTTP ${r.status}）：${_ghMessage(r.body)}',
+      );
+    }
+    final decoded = jsonDecode(r.body);
+    if (decoded is! List) {
+      return const HistoryResult(ok: false, revisions: [], message: '返回格式异常');
+    }
+    final revisions = <AnnouncementRevision>[];
+    for (final item in decoded) {
+      if (item is! Map) continue;
+      final commit = item['commit'] is Map
+          ? Map<String, dynamic>.from(item['commit'] as Map)
+          : <String, dynamic>{};
+      final author = commit['author'] is Map
+          ? Map<String, dynamic>.from(commit['author'] as Map)
+          : <String, dynamic>{};
+      final sha = (item['sha'] ?? '').toString();
+      if (sha.isEmpty) continue;
+      revisions.add(AnnouncementRevision(
+        sha: sha,
+        message: (commit['message'] ?? '').toString().split('\n').first,
+        date: author['date']?.toString(),
+        author: author['name']?.toString(),
+      ));
+    }
+    return HistoryResult(ok: true, revisions: revisions, message: '共 ${revisions.length} 条');
+  } catch (e) {
+    return HistoryResult(ok: false, revisions: const [], message: '请求异常：$e');
+  }
+}
+
+/// 读取指定版本（默认当前分支）的公告 JSON 文本。
+Future<String?> fetchAnnouncementContent({
+  required String token,
+  String? ref,
+}) async {
+  if (token.trim().isEmpty) return null;
+  final target = (ref == null || ref.isEmpty) ? phoRepoBranch : ref;
+  final url = 'https://api.github.com/repos/$phoRepoOwner/$phoRepoName/contents'
+      '/$phoAnnouncementPath?ref=$target';
+  try {
+    final r = await _ghRequest('GET', url, token: token);
+    if (r.status != 200) return null;
+    final decoded = jsonDecode(r.body);
+    if (decoded is! Map) return null;
+    final content = (decoded['content'] ?? '').toString().replaceAll('\n', '');
+    if (content.isEmpty) return null;
+    return utf8.decode(base64Decode(content));
+  } catch (_) {
+    return null;
+  }
+}
+
+/// 回滚：把某个历史版本的内容重新提交为最新（不是 git revert，公告只有一条主线）。
+Future<PublishResult> restoreAnnouncementRevision({
+  required String token,
+  required String sha,
+}) async {
+  final text = await fetchAnnouncementContent(token: token, ref: sha);
+  if (text == null) {
+    return const PublishResult(ok: false, message: '读取该版本内容失败');
+  }
+  final short = sha.length >= 7 ? sha.substring(0, 7) : sha;
+  return publishAnnouncement(
+    token: token,
+    jsonText: text,
+    commitMessage: 'docs: 回滚公告到 $short',
+  );
+}
+
 Future<String> readSeenAnnouncementIds() async {
   try {
     final prefs = await SharedPreferences.getInstance();
