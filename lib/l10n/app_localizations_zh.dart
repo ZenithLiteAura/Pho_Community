@@ -924,4 +924,94 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get startupNoticeHowToDisable =>
       '不想每次启动都看到？到「设置 → 应用信息 → 高级设置」打开「关闭启动前弹窗」即可。';
+
+  @override
+  String get devOptions => '开发者选项';
+
+  @override
+  String get devOptionsDesc => '仅维护者使用的调试与发布工具';
+
+  @override
+  String get devUnlocked => '已解锁开发者选项';
+
+  @override
+  String get devPasswordTitle => '开发者密码';
+
+  @override
+  String get devPasswordHint => '请输入密码';
+
+  @override
+  String get devPasswordWrong => '密码错误';
+
+  @override
+  String get devPasswordConfirm => '确定';
+
+  @override
+  String get devSectionAnnouncement => '公告工具';
+
+  @override
+  String get devProbeSources => '测试拉取公告（逐个源）';
+
+  @override
+  String get devPreviewAnnouncement => '预览公告弹窗';
+
+  @override
+  String get devResetSeen => '重置公告已读记录';
+
+  @override
+  String get devShowStartupNoticeNow => '立即弹出「版权与致谢」';
+
+  @override
+  String get devForceStartupNotice => '下次启动恢复显示版权弹窗';
+
+  @override
+  String get devSectionPublish => '发布公告';
+
+  @override
+  String get devGithubToken => 'GitHub Token（只存本机）';
+
+  @override
+  String get devAnnouncementId => '公告 id';
+
+  @override
+  String get devLevel => '级别';
+
+  @override
+  String get devGenerateOnly => '生成 JSON 并复制';
+
+  @override
+  String get devPublish => '发布';
+
+  @override
+  String get devDisableAnnouncement => '下线公告（enabled=false）';
+
+  @override
+  String get devSectionUpdate => '更新检查';
+
+  @override
+  String get devTestUpdateCheck => '测试检查更新';
+
+  @override
+  String get devOpenReleases => '打开 Releases 页';
+
+  @override
+  String get devSectionDiagnostics => '诊断';
+
+  @override
+  String get devCollectDiagnostics => '生成诊断信息（并复制）';
+
+  @override
+  String get devSectionDanger => '危险操作';
+
+  @override
+  String get devClearAllPrefs => '清空所有本地设置';
+
+  @override
+  String get devConfirmClear => '确认清空？登录、同步进度、所有开关都会重置，且不可撤销。';
+
+  @override
+  String get devCleared => '已清空所有本地设置';
+
+  @override
+  String get devLockAgain => '锁定开发者选项';
 }

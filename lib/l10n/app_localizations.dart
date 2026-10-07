@@ -1897,6 +1897,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Don\'t want to see this on every launch? Go to Settings → About → Advanced settings and turn on \"Disable startup notice\".'**
   String get startupNoticeHowToDisable;
+
+  /// No description provided for @devOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer options'**
+  String get devOptions;
+
+  /// No description provided for @devOptionsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Debugging and publishing tools for maintainers only'**
+  String get devOptionsDesc;
+
+  /// No description provided for @devUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer options unlocked'**
+  String get devUnlocked;
+
+  /// No description provided for @devPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer password'**
+  String get devPasswordTitle;
+
+  /// No description provided for @devPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter password'**
+  String get devPasswordHint;
+
+  /// No description provided for @devPasswordWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong password'**
+  String get devPasswordWrong;
+
+  /// No description provided for @devPasswordConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get devPasswordConfirm;
+
+  /// No description provided for @devSectionAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement tools'**
+  String get devSectionAnnouncement;
+
+  /// No description provided for @devProbeSources.
+  ///
+  /// In en, this message translates to:
+  /// **'Test fetching announcements (per source)'**
+  String get devProbeSources;
+
+  /// No description provided for @devPreviewAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview announcement dialog'**
+  String get devPreviewAnnouncement;
+
+  /// No description provided for @devResetSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset read-announcement records'**
+  String get devResetSeen;
+
+  /// No description provided for @devShowStartupNoticeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the copyright notice now'**
+  String get devShowStartupNoticeNow;
+
+  /// No description provided for @devForceStartupNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enable the startup notice'**
+  String get devForceStartupNotice;
+
+  /// No description provided for @devSectionPublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish announcement'**
+  String get devSectionPublish;
+
+  /// No description provided for @devGithubToken.
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub token (stored on this device only)'**
+  String get devGithubToken;
+
+  /// No description provided for @devAnnouncementId.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement id'**
+  String get devAnnouncementId;
+
+  /// No description provided for @devLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get devLevel;
+
+  /// No description provided for @devGenerateOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Build JSON and copy'**
+  String get devGenerateOnly;
+
+  /// No description provided for @devPublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish'**
+  String get devPublish;
+
+  /// No description provided for @devDisableAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the announcement down (enabled=false)'**
+  String get devDisableAnnouncement;
+
+  /// No description provided for @devSectionUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Update check'**
+  String get devSectionUpdate;
+
+  /// No description provided for @devTestUpdateCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Test update check'**
+  String get devTestUpdateCheck;
+
+  /// No description provided for @devOpenReleases.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the releases page'**
+  String get devOpenReleases;
+
+  /// No description provided for @devSectionDiagnostics.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostics'**
+  String get devSectionDiagnostics;
+
+  /// No description provided for @devCollectDiagnostics.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect diagnostics (and copy)'**
+  String get devCollectDiagnostics;
+
+  /// No description provided for @devSectionDanger.
+  ///
+  /// In en, this message translates to:
+  /// **'Danger zone'**
+  String get devSectionDanger;
+
+  /// No description provided for @devClearAllPrefs.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all local settings'**
+  String get devClearAllPrefs;
+
+  /// No description provided for @devConfirmClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear everything? Sign-in, sync progress and every setting will be reset. This cannot be undone.'**
+  String get devConfirmClear;
+
+  /// No description provided for @devCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'All local settings cleared'**
+  String get devCleared;
+
+  /// No description provided for @devLockAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock developer options'**
+  String get devLockAgain;
 }
 
 class _AppLocalizationsDelegate

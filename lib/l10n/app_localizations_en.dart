@@ -959,4 +959,97 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get startupNoticeHowToDisable =>
       'Don\'t want to see this on every launch? Go to Settings → About → Advanced settings and turn on \"Disable startup notice\".';
+
+  @override
+  String get devOptions => 'Developer options';
+
+  @override
+  String get devOptionsDesc =>
+      'Debugging and publishing tools for maintainers only';
+
+  @override
+  String get devUnlocked => 'Developer options unlocked';
+
+  @override
+  String get devPasswordTitle => 'Developer password';
+
+  @override
+  String get devPasswordHint => 'Enter password';
+
+  @override
+  String get devPasswordWrong => 'Wrong password';
+
+  @override
+  String get devPasswordConfirm => 'OK';
+
+  @override
+  String get devSectionAnnouncement => 'Announcement tools';
+
+  @override
+  String get devProbeSources => 'Test fetching announcements (per source)';
+
+  @override
+  String get devPreviewAnnouncement => 'Preview announcement dialog';
+
+  @override
+  String get devResetSeen => 'Reset read-announcement records';
+
+  @override
+  String get devShowStartupNoticeNow => 'Show the copyright notice now';
+
+  @override
+  String get devForceStartupNotice => 'Re-enable the startup notice';
+
+  @override
+  String get devSectionPublish => 'Publish announcement';
+
+  @override
+  String get devGithubToken => 'GitHub token (stored on this device only)';
+
+  @override
+  String get devAnnouncementId => 'Announcement id';
+
+  @override
+  String get devLevel => 'Level';
+
+  @override
+  String get devGenerateOnly => 'Build JSON and copy';
+
+  @override
+  String get devPublish => 'Publish';
+
+  @override
+  String get devDisableAnnouncement =>
+      'Take the announcement down (enabled=false)';
+
+  @override
+  String get devSectionUpdate => 'Update check';
+
+  @override
+  String get devTestUpdateCheck => 'Test update check';
+
+  @override
+  String get devOpenReleases => 'Open the releases page';
+
+  @override
+  String get devSectionDiagnostics => 'Diagnostics';
+
+  @override
+  String get devCollectDiagnostics => 'Collect diagnostics (and copy)';
+
+  @override
+  String get devSectionDanger => 'Danger zone';
+
+  @override
+  String get devClearAllPrefs => 'Clear all local settings';
+
+  @override
+  String get devConfirmClear =>
+      'Clear everything? Sign-in, sync progress and every setting will be reset. This cannot be undone.';
+
+  @override
+  String get devCleared => 'All local settings cleared';
+
+  @override
+  String get devLockAgain => 'Lock developer options';
 }

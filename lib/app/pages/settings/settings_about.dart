@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:img_syncer/app/pages/settings/settings_advanced.dart';
+import 'package:img_syncer/app/pages/settings/settings_developer.dart';
 import 'package:img_syncer/app/state/community_info.dart';
+import 'package:img_syncer/app/state/developer_mode.dart';
 import 'package:img_syncer/app/state/global.dart';
 import 'package:img_syncer/app/state/update_checker.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
+import 'package:img_syncer/app/widgets/developer_password_dialog.dart';
 import 'package:img_syncer/app/widgets/liquid_glass_toast.dart';
 import 'package:img_syncer/app/widgets/update_dialog.dart';
 
@@ -24,6 +27,44 @@ class SettingsAboutPage extends StatefulWidget {
 class _SettingsAboutPageState extends State<SettingsAboutPage> {
   /// 是否正在检查更新（用于按钮转圈与防重复点击）。
   bool _checking = false;
+
+  /// 开发者选项是否已解锁（决定详情卡里是否出现入口）。
+  bool _devUnlocked = false;
+
+  /// 图标连续点击计数器：7 次才会弹密码框。
+  final DeveloperTapGate _devGate = DeveloperTapGate();
+
+  @override
+  void initState() {
+    super.initState();
+    isDeveloperModeUnlocked().then((value) {
+      if (!mounted) return;
+      setState(() => _devUnlocked = value);
+    });
+  }
+
+  /// 点击顶部图标：连续 7 次后要求密码（已解锁则直接进入开发者选项）。
+  Future<void> _onLogoTap() async {
+    if (!_devGate.registerTap()) return;
+    if (_devUnlocked) {
+      _pushDeveloper();
+      return;
+    }
+    final ok = await showDeveloperPasswordDialog(context);
+    if (!mounted || !ok) return;
+    await setDeveloperModeUnlocked(true);
+    if (!mounted) return;
+    setState(() => _devUnlocked = true);
+    LiquidGlassToast.show(context, l10n.devUnlocked);
+    _pushDeveloper();
+  }
+
+  void _pushDeveloper() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SettingsDeveloperPage()),
+    );
+  }
 
   Future<void> _openUrl(String url) async {
     try {
@@ -69,14 +110,18 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
         children: [
           const SizedBox(height: AppSpacing.lg),
+          // 隐藏入口：连续点击这个图标 7 次 → 输入开发者密码 → 开发者选项。
           Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(AppRadius.large),
-              child: Image.asset(
-                'assets/icon/pho_icon.png',
-                width: 96,
-                height: 96,
-                fit: BoxFit.cover,
+            child: GestureDetector(
+              onTap: _onLogoTap,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadius.large),
+                child: Image.asset(
+                  'assets/icon/pho_icon.png',
+                  width: 96,
+                  height: 96,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
@@ -211,6 +256,24 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
                   ),
                   onTap: _pushAdvanced,
                 ),
+                if (_devUnlocked) ...[
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.developer_mode_outlined, size: 26),
+                    title: Text(l10n.devOptions),
+                    subtitle: Text(
+                      l10n.devOptionsDesc,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    onTap: _pushDeveloper,
+                  ),
+                ],
               ],
             ),
           ),

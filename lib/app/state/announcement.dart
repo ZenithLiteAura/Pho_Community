@@ -13,15 +13,20 @@ const String announcementSeenIdsKey = 'announcement_seen_ids';
 
 /// 公告源，按优先级依次尝试。
 ///
-/// 顺序的取舍：
-/// 1. `raw.githubusercontent.com` —— 无需任何配置、push 即生效，CDN 缓存仅 5 分钟，内容最新；
-/// 2. `cdn.jsdelivr.net` —— 国内可达性通常优于前两者，作为「被墙时」的主力备源；
-/// 3. GitHub Pages —— 需要在仓库 Settings → Pages 里开一次；未开启时是 404，直接跳过。
+/// 顺序的取舍（实测结论写在每条后面）：
+/// 1. `raw.githubusercontent.com` —— push 即生效，缓存仅 5 分钟，内容最新；
+/// 2. `gcore.jsdelivr.net` —— jsDelivr 的另一组节点，缓存比 cdn 主域名新，国内可达性好；
+/// 3. `github.com/.../raw/main/...` —— 走 GitHub 主域，raw 域名被污染时往往仍可访问；
+/// 4. `cdn.jsdelivr.net` —— 国内可达性最好，但 `@main` 的分支解析最长会被缓存 12 小时，
+///    容易拿到旧版本，所以排在 gcore 之后；
+/// 5. GitHub Pages —— 需要在仓库 Settings → Pages 里开一次；未开启时是 404，自动跳过。
 ///
-/// 每次启动会**并发**请求三条源，再按上述优先级取第一个「返回了合法 JSON」的结果，
-/// 这样既不会因为某条源被墙而卡住启动，也不会让 jsDelivr 的旧缓存盖掉 raw 的新内容。
+/// 每次启动会**并发**请求全部源，再按上述优先级取第一个「返回了合法 JSON」的结果：
+/// 既不会因为某条源被墙而卡住启动，也不会让带长缓存的源盖掉最新内容。
 const List<String> announcementSources = <String>[
   'https://raw.githubusercontent.com/ZenithLiteAura/Pho_Community/main/docs/announcement.json',
+  'https://gcore.jsdelivr.net/gh/ZenithLiteAura/Pho_Community@main/docs/announcement.json',
+  'https://github.com/ZenithLiteAura/Pho_Community/raw/main/docs/announcement.json',
   'https://cdn.jsdelivr.net/gh/ZenithLiteAura/Pho_Community@main/docs/announcement.json',
   'https://zenithliteaura.github.io/Pho_Community/announcement.json',
 ];

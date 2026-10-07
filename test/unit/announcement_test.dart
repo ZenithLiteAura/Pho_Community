@@ -126,16 +126,26 @@ void main() {
   });
 
   group('公告源配置', () {
-    test('三源齐备且顺序为 raw -> jsDelivr -> Pages', () {
-      expect(announcementSources.length, 3);
+    test('五源齐备且顺序为 raw -> gcore -> github.com -> jsDelivr -> Pages', () {
+      expect(announcementSources.length, 5);
       expect(announcementSources[0], contains('raw.githubusercontent.com'));
-      expect(announcementSources[1], contains('cdn.jsdelivr.net'));
-      expect(announcementSources[2], contains('github.io'));
-      // raw 与 jsDelivr 指向仓库里的 docs/ 目录；
-      // Pages 选 /docs 作为站点根目录，因此站点 URL 里没有 /docs/ 这一层。
-      expect(announcementSources[0], endsWith('/docs/announcement.json'));
-      expect(announcementSources[1], endsWith('/docs/announcement.json'));
-      expect(announcementSources[2], endsWith('/announcement.json'));
+      expect(announcementSources[1], contains('gcore.jsdelivr.net'));
+      expect(announcementSources[2], contains('github.com/'));
+      expect(announcementSources[3], contains('cdn.jsdelivr.net'));
+      expect(announcementSources[4], contains('github.io'));
+      // 带长缓存、容易拿到旧内容的 cdn.jsdelivr 必须排在 gcore 之后
+      expect(
+        announcementSources.indexOf('https://cdn.jsdelivr.net/gh/'
+            'ZenithLiteAura/Pho_Community@main/docs/announcement.json'),
+        greaterThan(announcementSources.indexOf(
+            'https://gcore.jsdelivr.net/gh/'
+            'ZenithLiteAura/Pho_Community@main/docs/announcement.json')),
+      );
+      // 前四条指向仓库里的 docs/ 目录；Pages 选 /docs 作为站点根目录，URL 里没有这一层。
+      for (var i = 0; i < 4; i++) {
+        expect(announcementSources[i], endsWith('/docs/announcement.json'));
+      }
+      expect(announcementSources[4], endsWith('/announcement.json'));
     });
   });
 }
