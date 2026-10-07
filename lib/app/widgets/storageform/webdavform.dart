@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:img_syncer/app/state/event_bus.dart';
 import 'package:img_syncer/proto/img_syncer.pbgrpc.dart';
 import 'package:img_syncer/app/state/state_model.dart';
@@ -6,7 +6,19 @@ import 'package:img_syncer/bridge/storage/storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:img_syncer/app/state/global.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
+import 'package:img_syncer/app/widgets/miuix_dropdown.dart';
+import 'package:img_syncer/app/state/webdav_config_store.dart';
+import 'package:img_syncer/app/widgets/motion/miuix_overlay.dart';
 
+/// WebDAV 配置表单（多配置版）。
+///
+/// 与旧版的区别：
+///  - 旧版固定「主存储 + 备份存储」两槽位，备份作为主目标写失败后的**自动回退**目标；
+///  - 本版改为**多具名配置**（配置1、配置2…），顶部下拉选择当前使用哪一条，
+///    并支持新建 / 重命名 / 删除。**不再有自动回退**：同时只使用选中的那一条。
+///
+/// 生效时机：切换下拉只换「编辑对象」，真正写入并应用到 Go 服务端是在点「保存」时
+/// ——避免"选到尚未填写的配置就把存储置空"。
 class WebDavForm extends StatefulWidget {
   const WebDavForm({Key? key}) : super(key: key);
 
@@ -15,26 +27,22 @@ class WebDavForm extends StatefulWidget {
 }
 
 class WebDavFormState extends State<WebDavForm> {
-  @protected
   final GlobalKey _formKey = GlobalKey<FormState>();
+
+  List<WebdavConfig> _configs = <WebdavConfig>[];
+  String? _activeId;
+  bool _loading = true;
+
   TextEditingController? urlController;
   TextEditingController? usernameController;
   TextEditingController? passwordController;
   TextEditingController? rootPathController;
-  TextEditingController? backupUrlController;
-  TextEditingController? backupUsernameController;
-  TextEditingController? backupPasswordController;
-  TextEditingController? backupRootPathController;
-  /// 主 / 备用存储各自的测试结果。
-  ///
-  /// 仅用于给出反馈，**不再**作为保存按钮的启用条件 ——
-  /// 原先必须先测试成功才能保存，导致「保存按钮点不动」。
-  bool primaryTestPassed = false;
-  bool backupTestPassed = false;
+
+  /// 测试结果仅作反馈，不作为保存按钮的启用条件。
+  bool testPassed = false;
   String? errormsg;
   String currentPath = "";
-  bool insecure = false;
-  bool backupInsecure = true;
+  bool insecure = true;
 
   @override
   void initState() {
@@ -43,25 +51,176 @@ class WebDavFormState extends State<WebDavForm> {
     usernameController = TextEditingController();
     passwordController = TextEditingController();
     rootPathController = TextEditingController();
-    backupUrlController = TextEditingController();
-    backupUsernameController = TextEditingController();
-    backupPasswordController = TextEditingController();
-    backupRootPathController = TextEditingController();
-    SharedPreferences.getInstance().then((prefs) {
-      urlController!.text = prefs.getString('webdav_url') ?? "";
-      usernameController!.text = prefs.getString('webdav_username') ?? "";
-      passwordController!.text = prefs.getString('webdav_password') ?? "";
-      rootPathController!.text = prefs.getString('webdav_root_path') ?? "";
-      backupUrlController!.text = prefs.getString('webdav_url2') ?? "";
-      backupUsernameController!.text = prefs.getString('webdav_username2') ?? "";
-      backupPasswordController!.text = prefs.getString('webdav_password2') ?? "";
-      backupRootPathController!.text = prefs.getString('webdav_root_path2') ?? "";
-      setState(() {
-        insecure = prefs.getBool('webdav_insecure') ?? true;
-        backupInsecure = prefs.getBool('webdav_insecure2') ?? true;
-      });
+    _loadConfigs();
+  }
+
+  @override
+  void dispose() {
+    urlController?.dispose();
+    usernameController?.dispose();
+    passwordController?.dispose();
+    rootPathController?.dispose();
+    super.dispose();
+  }
+
+  // ── 载入 ────────────────────────────────────────────────
+
+  Future<void> _loadConfigs() async {
+    final prefs = await SharedPreferences.getInstance();
+    var list = await WebdavConfigStore.load(prefs);
+
+    // 列表为空（用户删空过，或首次安装且旧键皆空）：补一个空「配置1」。
+    if (list.isEmpty) {
+      list = <WebdavConfig>[
+        WebdavConfigStore.createConfig('${l10n.configNamePrefix}1'),
+      ];
+      await WebdavConfigStore.save(list, prefs);
+    }
+
+    var activeId = await WebdavConfigStore.loadActiveId(prefs);
+    final active = WebdavConfigStore.activeOf(list, activeId);
+    activeId = active?.id;
+    await WebdavConfigStore.saveActiveId(activeId, prefs);
+
+    if (!mounted) return;
+    setState(() {
+      _configs = list;
+      _activeId = activeId;
+      _fillFields(active);
+      _loading = false;
     });
   }
+
+  /// 把某条配置填进输入框。
+  void _fillFields(WebdavConfig? c) {
+    urlController!.text = c?.url ?? '';
+    usernameController!.text = c?.username ?? '';
+    passwordController!.text = c?.password ?? '';
+    rootPathController!.text = c?.rootPath ?? '';
+    insecure = c?.insecure ?? true;
+    testPassed = false;
+    errormsg = null;
+  }
+
+  /// 当前生效（正在编辑）的配置。
+  WebdavConfig? get _activeConfig {
+    if (_configs.isEmpty) return null;
+    for (final c in _configs) {
+      if (c.id == _activeId) return c;
+    }
+    return _configs.first;
+  }
+
+  // ── 配置管理 ────────────────────────────────────────────
+
+  Future<void> _selectConfig(String? id) async {
+    if (id == null || id == _activeId) return;
+    final prefs = await SharedPreferences.getInstance();
+    await WebdavConfigStore.saveActiveId(id, prefs);
+    if (!mounted) return;
+    setState(() {
+      _activeId = id;
+      _fillFields(_activeConfig);
+    });
+  }
+
+  Future<void> _newConfig() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = WebdavConfigStore.nextDefaultName(
+      _configs,
+      l10n.configNamePrefix,
+    );
+    final created = WebdavConfigStore.createConfig(name);
+    final list = <WebdavConfig>[..._configs, created];
+    await WebdavConfigStore.save(list, prefs);
+    await WebdavConfigStore.saveActiveId(created.id, prefs);
+    if (!mounted) return;
+    setState(() {
+      _configs = list;
+      _activeId = created.id;
+      _fillFields(created);
+    });
+  }
+
+  Future<void> _renameConfig() async {
+    final target = _activeConfig;
+    if (target == null) return;
+    final controller = TextEditingController(text: target.name);
+    final newName = await showMiuixDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.renameConfig),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: InputDecoration(labelText: l10n.configName),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: Text(l10n.save),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (newName == null) return;
+    if (newName.isEmpty) {
+      SnackBarManager.showSnackBar(l10n.configNameEmpty);
+      return;
+    }
+    final prefs = await SharedPreferences.getInstance();
+    target.name = newName;
+    await WebdavConfigStore.save(_configs, prefs);
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  Future<void> _deleteConfig() async {
+    final target = _activeConfig;
+    if (target == null) return;
+    final confirmed = await showMiuixDialog<bool>(
+      context: context,
+      // 破坏性操作：不允许下拉关闭
+      dragToDismiss: false,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.deleteConfig),
+        content: Text(l10n.deleteConfigConfirm),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.deleteConfig),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final list = _configs.where((c) => c.id != target.id).toList();
+    // 允许删到空：列表为空时不选中任何配置，下次进入会自动补「配置1」。
+    final next = _activeId == target.id
+        ? (list.isNotEmpty ? list.first.id : null)
+        : _activeId;
+    await WebdavConfigStore.save(list, prefs);
+    await WebdavConfigStore.saveActiveId(next, prefs);
+    if (!mounted) return;
+    setState(() {
+      _configs = list;
+      _activeId = next;
+      _fillFields(WebdavConfigStore.activeOf(list, next));
+    });
+  }
+
+  // ── 连接测试 / 保存 ─────────────────────────────────────
 
   Future<bool> checkWebdav() async {
     final url = urlController!.text;
@@ -111,31 +270,11 @@ class WebDavFormState extends State<WebDavForm> {
     return rsp.dirs;
   }
 
-  Widget input(
-      String label, TextEditingController? c, void Function(String?)? onSaved) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.paddingLarge, vertical: AppSpacing.paddingSmall),
-      child: TextFormField(
-        controller: c,
-        obscureText: false,
-        onSaved: onSaved,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          labelText: label,
-        ),
-      ),
-    );
-  }
-
-  /// 测试**主存储**连接。
-  ///
-  /// 成功/失败只作为反馈（弹提示或错误框），不影响保存按钮的可用性。
-  /// 注意：该调用同时会把主存储设为当前 drive（与原有行为一致）。
-  Future<void> testPrimaryStorage() async {
+  /// 测试当前输入框里的这条配置。
+  Future<void> testCurrentStorage() async {
     final url = urlController!.text;
     if (url.isEmpty) {
-      setState(() => errormsg = '请先填写主存储地址');
+      setState(() => errormsg = l10n.configNotReady);
       showErrorDialog(errormsg!);
       return;
     }
@@ -149,73 +288,152 @@ class WebDavFormState extends State<WebDavForm> {
       ));
       if (rsp.success) {
         setState(() {
-          primaryTestPassed = true;
+          testPassed = true;
           errormsg = null;
         });
         SnackBarManager.showSnackBar(l10n.testSuccess);
       } else {
         setState(() {
-          primaryTestPassed = false;
+          testPassed = false;
           errormsg = rsp.message;
         });
         showErrorDialog(rsp.message);
       }
     } catch (e) {
       setState(() {
-        primaryTestPassed = false;
+        testPassed = false;
         errormsg = e.toString();
       });
       showErrorDialog(e.toString());
     }
   }
 
-  /// 测试**备用存储**连接。
-  ///
-  /// 原先只能随主存储被连带测试，无法单独验证备用目标是否可用。
-  Future<void> testBackupStorage() async {
-    final backupUrl = backupUrlController!.text;
-    if (backupUrl.isEmpty) {
-      setState(() => errormsg = l10n.backupUrlEmpty);
-      showErrorDialog(errormsg!);
+  /// 保存当前配置并把「选中的这条」应用到 Go 服务端（单目标，无自动回退）。
+  Future<void> saveCurrentConfig() async {
+    final target = _activeConfig;
+    if (target == null) return;
+
+    final prefs = await SharedPreferences.getInstance();
+
+    // 1) 字段写回该配置并持久化
+    target.url = urlController!.text.trim();
+    target.username = usernameController!.text;
+    target.password = passwordController!.text;
+    target.rootPath = rootPathController!.text.trim();
+    target.insecure = insecure;
+    await WebdavConfigStore.save(_configs, prefs);
+    await WebdavConfigStore.saveActiveId(target.id, prefs);
+
+    // 2) 未填写完整：只保存不应用，并如实反映"当前无可用存储"
+    if (!target.isUsable) {
+      settingModel.setRemoteStorageSetted(false);
+      if (!mounted) return;
+      setState(() {});
+      SnackBarManager.showSnackBar(l10n.configNotReady);
       return;
     }
+
+    // 3) 应用到服务端
     try {
       final rsp = await storage.cli.setDriveWebdav(SetDriveWebdavRequest(
-        addr: backupUrl,
-        username: backupUsernameController!.text,
-        password: backupPasswordController!.text,
-        root: backupRootPathController!.text,
-        insecure: backupInsecure,
+        addr: target.url,
+        username: target.username,
+        password: target.password,
+        root: target.rootPath,
+        insecure: target.insecure,
       ));
       if (rsp.success) {
-        setState(() {
-          backupTestPassed = true;
-          errormsg = null;
-        });
-        SnackBarManager.showSnackBar(l10n.testSuccess);
+        await prefs.setString('drive', driveName[Drive.webDav]!);
+        settingModel.setRemoteStorageSetted(true);
+        assetModel.remoteLastError = null;
+        eventBus.fire(RemoteRefreshEvent(refreshUnSync: true));
+        SnackBarManager.showSnackBar(l10n.configSaved);
       } else {
-        setState(() {
-          backupTestPassed = false;
-          errormsg = rsp.message;
-        });
+        settingModel.setRemoteStorageSetted(false);
+        assetModel.remoteLastError = rsp.message;
         showErrorDialog(rsp.message);
       }
     } catch (e) {
-      setState(() {
-        backupTestPassed = false;
-        errormsg = e.toString();
-      });
+      settingModel.setRemoteStorageSetted(false);
+      assetModel.remoteLastError = e.toString();
       showErrorDialog(e.toString());
     }
+    if (!mounted) return;
+    setState(() {});
   }
 
-  /// 一组「测试 + 保存」按钮。主存储与备用存储各自独立一组。
-  Widget actionButtons({
-    required Future<void> Function() onTest,
-    required Future<void> Function() onSave,
-    required String testLabel,
-    required String saveLabel,
-  }) {
+  // ── UI ─────────────────────────────────────────────────
+
+  Widget input(String label, TextEditingController? c) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.paddingLarge,
+          vertical: AppSpacing.paddingSmall),
+      child: TextFormField(
+        controller: c,
+        obscureText: false,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: label,
+        ),
+      ),
+    );
+  }
+
+  /// 配置选择行：下拉 + 新建 / 重命名 / 删除。
+  Widget configSelector() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.paddingLarge, AppSpacing.paddingSmall,
+          AppSpacing.paddingLarge, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MiuixDropdownField<String>(
+            label: l10n.activeConfig,
+            value: _activeId ?? '',
+            enabled: _configs.isNotEmpty,
+            items: [
+              for (var i = 0; i < _configs.length; i++)
+                MiuixDropdownItem<String>(
+                  value: _configs[i].id,
+                  // 名称留空时按位置显示「配置N」（与新建配置的默认命名一致）
+                  label: _configs[i].name.trim().isEmpty
+                      ? '${l10n.configNamePrefix}${i + 1}'
+                      : _configs[i].name,
+                ),
+            ],
+            onChanged: (id) => _selectConfig(id),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Wrap(
+            spacing: AppSpacing.xs,
+            children: [
+              TextButton.icon(
+                onPressed: _newConfig,
+                icon: const Icon(Icons.add, size: 18),
+                label: Text(l10n.newConfig),
+              ),
+              TextButton.icon(
+                onPressed: _activeConfig == null ? null : _renameConfig,
+                icon: const Icon(Icons.drive_file_rename_outline, size: 18),
+                label: Text(l10n.renameConfig),
+              ),
+              TextButton.icon(
+                onPressed: _activeConfig == null ? null : _deleteConfig,
+                icon: const Icon(Icons.delete_outline, size: 18),
+                label: Text(l10n.deleteConfig),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 一组「测试连接 + 保存」按钮。
+  Widget actionButtons() {
     return Padding(
       padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.paddingLarge,
@@ -226,8 +444,8 @@ class WebDavFormState extends State<WebDavForm> {
             child: SizedBox(
               height: 44,
               child: FilledButton.tonal(
-                onPressed: () => onTest(),
-                child: Text(testLabel,
+                onPressed: testCurrentStorage,
+                child: Text(l10n.testStorage,
                     maxLines: 1, overflow: TextOverflow.ellipsis),
               ),
             ),
@@ -237,10 +455,8 @@ class WebDavFormState extends State<WebDavForm> {
             child: SizedBox(
               height: 44,
               child: FilledButton(
-                // 保存不再依赖「是否测试成功」：原先 testSuccess 未通过时
-                // 按钮为 null（禁用），表现为「保存按钮点不动」。
-                onPressed: () => onSave(),
-                child: Text(saveLabel,
+                onPressed: saveCurrentConfig,
+                child: Text(l10n.save,
                     maxLines: 1, overflow: TextOverflow.ellipsis),
               ),
             ),
@@ -250,40 +466,39 @@ class WebDavFormState extends State<WebDavForm> {
     );
   }
 
-  /// 保存**主存储**配置（只写主存储字段与 drive，不动备用字段）。
-  Future<void> savePrimary() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('webdav_url', urlController!.text);
-    await prefs.setString('webdav_username', usernameController!.text);
-    await prefs.setString('webdav_password', passwordController!.text);
-    await prefs.setString('webdav_root_path', rootPathController!.text);
-    await prefs.setBool('webdav_insecure', insecure);
-    await prefs.setString('drive', driveName[Drive.webDav]!);
-    settingModel.setRemoteStorageSetted(true);
-    assetModel.remoteLastError = null;
-    eventBus.fire(RemoteRefreshEvent(refreshUnSync: true));
-    // 不再 pop：本表单同时嵌在设置树的「存储与备份」页里，
-    // pop 会让用户无法继续填写另一项（主 / 备用）。
-    SnackBarManager.showSnackBar(l10n.savePrimaryStorage);
-  }
-
-  /// 保存**备用存储**配置（只写备用字段；地址清空即表示取消备用）。
-  Future<void> saveBackup() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('webdav_url2', backupUrlController!.text);
-    await prefs.setString('webdav_username2', backupUsernameController!.text);
-    await prefs.setString('webdav_password2', backupPasswordController!.text);
-    await prefs.setString('webdav_root_path2', backupRootPathController!.text);
-    await prefs.setBool('webdav_insecure2', backupInsecure);
-    eventBus.fire(RemoteRefreshEvent(refreshUnSync: true));
-    SnackBarManager.showSnackBar(l10n.saveBackupStorage);
-  }
-
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = [];
+    if (_loading) {
+      return const Padding(
+        padding: EdgeInsets.all(AppSpacing.lg),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final children = <Widget>[];
+    children.add(configSelector());
+
+    if (_configs.isEmpty) {
+      children.add(Container(
+        padding: const EdgeInsets.fromLTRB(
+            AppSpacing.paddingLarge, AppSpacing.md,
+            AppSpacing.paddingLarge, AppSpacing.paddingSmall),
+        alignment: Alignment.centerLeft,
+        child: Text(
+          l10n.noConfigYet,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+        ),
+      ));
+      return Form(key: _formKey, child: Column(children: children));
+    }
+
+    // ── 当前配置的字段 ──
     children.add(Container(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.paddingLarge, vertical: AppSpacing.paddingSmall),
+      padding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.paddingLarge,
+          vertical: AppSpacing.paddingSmall),
       child: TextFormField(
         controller: urlController,
         obscureText: false,
@@ -296,24 +511,24 @@ class WebDavFormState extends State<WebDavForm> {
       ),
     ));
     children.add(
-        input('${l10n.username} (${l10n.optional})', usernameController, null));
+        input('${l10n.username} (${l10n.optional})', usernameController));
     children.add(
-        input('${l10n.password} (${l10n.optional})', passwordController, null));
+        input('${l10n.password} (${l10n.optional})', passwordController));
     children.add(CheckboxListTile(
-      title: const Text('跳过 TLS 证书验证'),
+      title: Text(l10n.skipTLS),
       subtitle: insecure
-          ? Text('⚠️ 跳过验证有安全风险',
+          ? Text('⚠️ ${l10n.allowUntrusted}',
               style: TextStyle(color: Theme.of(context).colorScheme.error))
           : null,
       value: insecure,
-      onChanged: (v) async {
+      onChanged: (v) {
         setState(() => insecure = v!);
-        final prefs = await SharedPreferences.getInstance();
-        prefs.setBool('webdav_insecure', v!);
       },
     ));
     children.add(Container(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.paddingLarge, vertical: AppSpacing.paddingSmall),
+      padding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.paddingLarge,
+          vertical: AppSpacing.paddingSmall),
       child: TextFormField(
         controller: rootPathController,
         obscureText: false,
@@ -327,10 +542,11 @@ class WebDavFormState extends State<WebDavForm> {
             icon: const Icon(Icons.open_in_browser),
             onPressed: () {
               checkWebdav().then((available) {
+                if (!mounted) return;
                 if (!available) {
                   showErrorDialog(errormsg!);
                 } else {
-                  showDialog(
+                  showMiuixDialog(
                     context: context,
                     builder: (BuildContext context) => rootPathDialog(),
                   );
@@ -341,83 +557,11 @@ class WebDavFormState extends State<WebDavForm> {
         ),
       ),
     ));
-    // 主存储的「测试 + 保存」独立成组
-    children.add(actionButtons(
-      onTest: testPrimaryStorage,
-      onSave: savePrimary,
-      testLabel: l10n.testPrimaryStorage,
-      saveLabel: l10n.savePrimaryStorage,
-    ));
-    // 备份存储（可选）：双 WebDAV 目标，主目标失败自动回退备份
-    children.add(Container(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.paddingLarge, AppSpacing.md, AppSpacing.paddingLarge, 0),
-      alignment: Alignment.centerLeft,
-      child: Text(
-        l10n.backupStorage,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-      ),
-    ));
-    children.add(Container(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.paddingLarge, 4, AppSpacing.paddingLarge, 0),
-      alignment: Alignment.centerLeft,
-      child: Text(
-        l10n.backupStorageDesc,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-      ),
-    ));
-    children.add(Container(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.paddingLarge, vertical: AppSpacing.paddingSmall),
-      child: TextFormField(
-        controller: backupUrlController,
-        obscureText: false,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "Backup URL",
-          helperText: "eg: https://your.domain:port",
-        ),
-      ),
-    ));
-    children.add(input('${l10n.username} (${l10n.optional})', backupUsernameController, null));
-    children.add(input('${l10n.password} (${l10n.optional})', backupPasswordController, null));
-    children.add(CheckboxListTile(
-      title: const Text('跳过 TLS 证书验证（备份）'),
-      value: backupInsecure,
-      onChanged: (v) async {
-        setState(() => backupInsecure = v!);
-        final prefs = await SharedPreferences.getInstance();
-        prefs.setBool('webdav_insecure2', v!);
-      },
-    ));
-    children.add(Container(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.paddingLarge, vertical: AppSpacing.paddingSmall),
-      child: TextFormField(
-        controller: backupRootPathController,
-        obscureText: false,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Backup root path',
-          helperText: "eg: /path/photo",
-        ),
-      ),
-    ));
-    // 备用存储的「测试 + 保存」独立成组
-    children.add(actionButtons(
-      onTest: testBackupStorage,
-      onSave: saveBackup,
-      testLabel: l10n.testBackupStorage,
-      saveLabel: l10n.saveBackupStorage,
-    ));
+    children.add(actionButtons());
+
     return Form(
       key: _formKey,
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 
@@ -466,7 +610,8 @@ class WebDavFormState extends State<WebDavForm> {
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   snapshot.data![index],
-                                  style: Theme.of(context).textTheme.bodyMedium,
+                                  style:
+                                      Theme.of(context).textTheme.bodyMedium,
                                 ),
                               ),
                               onTap: () {
@@ -535,7 +680,7 @@ class WebDavFormState extends State<WebDavForm> {
   }
 
   void showErrorDialog(String msg) {
-    showDialog<String>(
+    showMiuixDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: Text(l10n.connectFailed),
@@ -549,4 +694,4 @@ class WebDavFormState extends State<WebDavForm> {
       ),
     );
   }
-}
+}

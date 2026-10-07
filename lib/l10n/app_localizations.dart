@@ -1555,6 +1555,288 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Slide to adjust the gallery column count (2-10)'**
   String get galleryColumnCountDesc;
+
+  /// No description provided for @activeConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Current profile'**
+  String get activeConfig;
+
+  /// No description provided for @newConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'New profile'**
+  String get newConfig;
+
+  /// No description provided for @renameConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename profile'**
+  String get renameConfig;
+
+  /// No description provided for @deleteConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete profile'**
+  String get deleteConfig;
+
+  /// No description provided for @configName.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile name'**
+  String get configName;
+
+  /// No description provided for @configNamePrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile '**
+  String get configNamePrefix;
+
+  /// No description provided for @configNameEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile name cannot be empty'**
+  String get configNameEmpty;
+
+  /// No description provided for @deleteConfigConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this profile? This cannot be undone.'**
+  String get deleteConfigConfirm;
+
+  /// No description provided for @noConfigYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No profiles yet — tap \"New profile\"'**
+  String get noConfigYet;
+
+  /// No description provided for @configNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile is missing URL or root path'**
+  String get configNotReady;
+
+  /// No description provided for @configSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile saved'**
+  String get configSaved;
+
+  /// No description provided for @motion.
+  ///
+  /// In en, this message translates to:
+  /// **'Motion'**
+  String get motion;
+
+  /// No description provided for @motionFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get motionFull;
+
+  /// No description provided for @motionSimple.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple'**
+  String get motionSimple;
+
+  /// No description provided for @motionOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get motionOff;
+
+  /// No description provided for @motionDescFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Expands from your finger, bloom follows it, overlays pull down to dismiss with a jelly bounce'**
+  String get motionDescFull;
+
+  /// No description provided for @motionDescSimple.
+  ///
+  /// In en, this message translates to:
+  /// **'Expands from your finger with a light bloom; overlays pull down to dismiss'**
+  String get motionDescSimple;
+
+  /// No description provided for @motionDescOff.
+  ///
+  /// In en, this message translates to:
+  /// **'No expand morph or bloom; overlays just appear (most efficient)'**
+  String get motionDescOff;
+
+  /// No description provided for @startupNoticeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Copyright & Credits'**
+  String get startupNoticeTitle;
+
+  /// No description provided for @startupNoticeCopyright.
+  ///
+  /// In en, this message translates to:
+  /// **'Copyright'**
+  String get startupNoticeCopyright;
+
+  /// No description provided for @startupNoticeOriginalAuthor.
+  ///
+  /// In en, this message translates to:
+  /// **'Original author'**
+  String get startupNoticeOriginalAuthor;
+
+  /// No description provided for @startupNoticeCommunityBuild.
+  ///
+  /// In en, this message translates to:
+  /// **'Community build maintained by'**
+  String get startupNoticeCommunityBuild;
+
+  /// No description provided for @startupNoticeModified.
+  ///
+  /// In en, this message translates to:
+  /// **'This community build modifies the original work'**
+  String get startupNoticeModified;
+
+  /// No description provided for @startupNoticeSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'If this app is useful to you, please star the original author\'s repository or report issues there to support its continued maintenance.'**
+  String get startupNoticeSupport;
+
+  /// No description provided for @startupNoticeLinkHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Original author\'s repository'**
+  String get startupNoticeLinkHint;
+
+  /// No description provided for @startupNoticeSecondsLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'s until you can close'**
+  String get startupNoticeSecondsLeft;
+
+  /// No description provided for @startupNoticeCanCloseNow.
+  ///
+  /// In en, this message translates to:
+  /// **'You can close this now'**
+  String get startupNoticeCanCloseNow;
+
+  /// No description provided for @startupNoticeClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get startupNoticeClose;
+
+  /// No description provided for @openInBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in browser'**
+  String get openInBrowser;
+
+  /// No description provided for @aboutOriginalAuthor.
+  ///
+  /// In en, this message translates to:
+  /// **'Original author'**
+  String get aboutOriginalAuthor;
+
+  /// No description provided for @aboutCommunityBuild.
+  ///
+  /// In en, this message translates to:
+  /// **'Community build'**
+  String get aboutCommunityBuild;
+
+  /// No description provided for @aboutLicense.
+  ///
+  /// In en, this message translates to:
+  /// **'License'**
+  String get aboutLicense;
+
+  /// No description provided for @advancedSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced settings'**
+  String get advancedSettings;
+
+  /// No description provided for @disableStartupNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable startup notice'**
+  String get disableStartupNotice;
+
+  /// No description provided for @disableStartupNoticeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'When enabled, the copyright notice will no longer appear from the next launch'**
+  String get disableStartupNoticeDesc;
+
+  /// No description provided for @checkForUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for updates'**
+  String get checkForUpdate;
+
+  /// No description provided for @checkForUpdateDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Check GitHub for a newer release'**
+  String get checkForUpdateDesc;
+
+  /// No description provided for @checkingUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking…'**
+  String get checkingUpdate;
+
+  /// No description provided for @updateLatest.
+  ///
+  /// In en, this message translates to:
+  /// **'You are up to date'**
+  String get updateLatest;
+
+  /// No description provided for @updateCheckFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Update check failed - please check your network and retry'**
+  String get updateCheckFailed;
+
+  /// No description provided for @updateAvailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update available'**
+  String get updateAvailableTitle;
+
+  /// No description provided for @updateAvailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A newer release is available on GitHub'**
+  String get updateAvailableBody;
+
+  /// No description provided for @updateReleaseNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Release notes'**
+  String get updateReleaseNotes;
+
+  /// No description provided for @updateGoDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get updateGoDownload;
+
+  /// No description provided for @updateLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get updateLater;
+
+  /// No description provided for @autoCheckUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for updates at startup'**
+  String get autoCheckUpdate;
+
+  /// No description provided for @autoCheckUpdateDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Check GitHub for a newer release at startup and notify you'**
+  String get autoCheckUpdateDesc;
 }
 
 class _AppLocalizationsDelegate

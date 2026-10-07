@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:img_syncer/app/state/global.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
 import 'package:img_syncer/app/theme/dock_style_controller.dart';
+import 'package:img_syncer/app/widgets/motion/miuix_overlay.dart';
 
 /// 二级页：Dock 设置 —— 风格、透明度、模糊度。
 class SettingsDockPage extends StatelessWidget {
@@ -114,7 +115,7 @@ class SettingsDockPage extends StatelessWidget {
 
   /// Dock 风格弹窗。
   void _showDockStyleDialog(BuildContext context, DockStyleController controller) {
-    showDialog(
+    showMiuixDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.dockStyle),
@@ -162,7 +163,7 @@ class SettingsDockPage extends StatelessWidget {
 
   /// Dock 透明度弹窗。
   void _showDockOpacityDialog(BuildContext context, DockStyleController controller) {
-    showDialog(
+    showMiuixDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.dockOpacity),
@@ -210,7 +211,7 @@ class SettingsDockPage extends StatelessWidget {
 
   /// Dock 模糊度弹窗。
   void _showDockBlurDialog(BuildContext context, DockStyleController controller) {
-    showDialog(
+    showMiuixDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.dockBlur),
@@ -255,4 +256,4 @@ class SettingsDockPage extends StatelessWidget {
       ),
     );
   }
-}
+}

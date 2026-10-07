@@ -7,6 +7,7 @@ import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:img_syncer/app/state/global.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
+import 'package:img_syncer/app/widgets/motion/miuix_overlay.dart';
 
 class NFSForm extends StatefulWidget {
   const NFSForm({Key? key}) : super(key: key);
@@ -113,7 +114,7 @@ class NFSFormState extends State<NFSForm> {
   }
 
   void showErrorDialog(String msg) {
-    showDialog<String>(
+    showMiuixDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: Text(l10n.connectFailed),
@@ -209,7 +210,7 @@ class NFSFormState extends State<NFSForm> {
                       if (!available) {
                         showErrorDialog(errormsg!);
                       } else {
-                        showDialog(
+                        showMiuixDialog(
                           context: context,
                           builder: (BuildContext context) => rootPathDialog(),
                         );
@@ -347,3 +348,4 @@ class NFSFormState extends State<NFSForm> {
     );
   }
 }
+

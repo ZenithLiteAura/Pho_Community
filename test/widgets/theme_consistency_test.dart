@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -70,7 +70,10 @@ void main() {
         'main.dart',                // Colors.transparent(L86-88) + Colors.orange/white(L241,246)
         'gallery_viewer_route.dart', // Colors.black(L441)+white(L446,L673)
         'video_route.dart',         // Colors.black(L97)+white(L74,L116)
-        'buy_route.dart',           // Colors.white(L91)
+        // 说明：buy_route.dart 属于 Pro 版页面，开源版已不存在；下面两项为
+        // 3.4 同步 / 既有代码中已审核通过的白色遮罩与图标用法。
+        'gallery_thumbnail_cell.dart', // 缩略图上的白色角标图标（白/黑遮罩之上）
+        'miuix_glass_surface.dart',    // 玻璃表层凝光使用的白色（深/浅色下均为白）
       };
 
       final pattern = RegExp(r'Colors\.(black|white|grey|orange|green|red|blue)\b');

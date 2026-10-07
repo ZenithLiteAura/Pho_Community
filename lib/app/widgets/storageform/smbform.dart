@@ -6,6 +6,7 @@ import 'package:img_syncer/bridge/storage/storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:img_syncer/app/state/global.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
+import 'package:img_syncer/app/widgets/motion/miuix_overlay.dart';
 
 class SMBForm extends StatefulWidget {
   const SMBForm({Key? key}) : super(key: key);
@@ -146,7 +147,7 @@ class _SMBFormState extends State<SMBForm> {
                 if (!available) {
                   showErrorDialog(errormsg!);
                 } else {
-                  showDialog(
+                  showMiuixDialog(
                     context: context,
                     builder: (BuildContext context) => shareDialog(),
                   );
@@ -172,7 +173,7 @@ class _SMBFormState extends State<SMBForm> {
                 ? null
                 : IconButton(
                     icon: const Icon(Icons.open_in_browser),
-                    onPressed: () => showDialog(
+                    onPressed: () => showMiuixDialog(
                       context: context,
                       builder: (BuildContext context) => rootPathDialog(),
                     ),
@@ -446,7 +447,7 @@ class _SMBFormState extends State<SMBForm> {
   }
 
   void showErrorDialog(String msg) {
-    showDialog<String>(
+    showMiuixDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: Text(l10n.connectFailed),
@@ -466,3 +467,4 @@ class _SMBFormState extends State<SMBForm> {
     return smbForm(context);
   }
 }
+

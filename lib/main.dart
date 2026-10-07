@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -18,10 +18,14 @@ import 'package:img_syncer/l10n/app_localizations.dart';
 import 'package:img_syncer/app/theme/theme.dart';
 import 'package:img_syncer/app/theme/theme_controller.dart';
 import 'package:img_syncer/app/theme/dock_style_controller.dart';
+import 'package:img_syncer/app/widgets/motion/motion_controller.dart';
+import 'package:img_syncer/app/widgets/motion/motion_origin.dart';
 import 'package:img_syncer/app/pages/settings/settings_home.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
 import 'package:img_syncer/app/pages/onboarding/onboarding_route.dart';
+import 'app/widgets/startup_notice_dialog.dart';
+import 'app/widgets/update_dialog.dart';
 // iOS 后台同步 headless entrypoint，必须被 main 的 import 图可达，
 // 否则 Debug Dart kernel 不会编译此库，BGProcessingTask 启动 headless
 // engine 时 Dart_LookupLibrary 找不到它。
@@ -35,6 +39,8 @@ void main() async {
   await themeController.load();
   // 恢复底部 Dock 风格/透明度/模糊度
   await dockController.load();
+  // 恢复弹层动效级别（关 / 简 / 全）
+  await motionController.load();
   Global.init().then((e) => runApp(
         MultiProvider(
           providers: [
@@ -43,8 +49,10 @@ void main() async {
             ChangeNotifierProvider(create: (context) => stateModel),
             ChangeNotifierProvider(create: (context) => themeController),
             ChangeNotifierProvider(create: (context) => dockController),
+            ChangeNotifierProvider(create: (context) => motionController),
           ],
-          child: const MyApp(),
+          // 根级记录手指按下位置：弹层据此做「从触点展开」动画（调用点无需传参）
+          child: MotionOrigin.wrap(child: const MyApp()),
         ),
       ));
 }
@@ -65,6 +73,16 @@ class _AppEntryPointState extends State<_AppEntryPoint> {
       if (!mounted) return;
       setState(() {
         _needsOnboarding = !(prefs.getBool('has_onboarded') ?? false);
+      });
+      // 首帧渲染后再弹出版权/致谢弹窗：此时 MaterialApp 的本地化代理已就绪，
+      // 且弹窗会叠在引导页/主界面之上（首次启动也满足「打开就弹」）。
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!mounted) return;
+        // 先弹版权/致谢声明（10 秒锁定），关闭后再检查更新，避免两个弹窗打架。
+        await showStartupNoticeIfNeeded(context);
+        if (!mounted) return;
+        // 启动时自动检查更新：仅在有新版本时弹窗，失败/已是最新一律静默。
+        await autoCheckForUpdateAndNotify(context);
       });
     });
   }
@@ -264,6 +282,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     return !isDesktop()
         ? Consumer<StateModel>(
             builder: (context, model, child) => Scaffold(
+              // 键盘不收缩主 body：body 是常驻三页的 PageView（含数百 cell 的相册），
+              // 每帧重排会让输入法拉起与动画变卡。文本输入页都是独立 push 的路由，
+              // 各有自己的 Scaffold（保持默认 resize），输入框仍会被键盘顶起。
+              resizeToAvoidBottomInset: false,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               body: Stack(
                 children: [
@@ -313,7 +335,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                     Positioned(
                       left: AppSpacing.md,
                       right: AppSpacing.md,
-                      bottom: MediaQuery.of(context).padding.bottom + AppSpacing.sm,
+                      bottom: MediaQuery.paddingOf(context).bottom + AppSpacing.sm,
                       child: _buildFloatingBottomNav(context, cs, isMiuix),
                     ),
                 ],

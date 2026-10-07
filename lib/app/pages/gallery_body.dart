@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
@@ -23,6 +23,7 @@ import 'package:gal/gal.dart';
 import 'package:img_syncer/app/pages/choose_album_route.dart';
 import 'package:img_syncer/app/pages/settings/settings_storage.dart';
 import 'package:img_syncer/app/widgets/thumbnail_skeleton.dart';
+import 'package:img_syncer/app/widgets/motion/miuix_overlay.dart';
 
 class GalleryBody extends StatefulWidget {
   GalleryBody({
@@ -63,6 +64,15 @@ class GalleryBodyState extends State<GalleryBody>
   double maxScrollOffset = 0;
   bool dragging = false;
 
+  /// v3.4 性能修复：把 MediaQuery 的 size/padding 缓存到字段。
+  ///
+  /// 原实现在滚动流回调里直接调 `MediaQuery.of(context)`，那会把整个页面绑到
+  /// MediaQuery 上——键盘弹出时 viewInsets 变化会让本页**逐帧重建/重排**
+  /// （整页含数百个缩略图 cell），表现为输入法拉起与动画很慢。
+  /// 改用窄化的 sizeOf/paddingOf 并在此缓存，回调里只读字段。
+  double _mediaHeight = 0;
+  double _mediaPaddingTop = 0;
+
   /// 预览页本地/云端切换状态
   late bool _useLocal;
 
@@ -89,8 +99,8 @@ class GalleryBodyState extends State<GalleryBody>
       if (maxScrollOffset == 0 || maxScrollOffset < scrollPosition) {
         return;
       }
-      final totalHeight = MediaQuery.of(context).size.height;
-      final paddingTop = MediaQuery.of(context).padding.top + 70;
+      final totalHeight = _mediaHeight;
+      final paddingTop = _mediaPaddingTop + 70;
       const paddingBottom = 130;
       final avaliabileHeight = totalHeight - paddingBottom - paddingTop;
       final target = paddingTop +
@@ -129,7 +139,13 @@ class GalleryBodyState extends State<GalleryBody>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final paddingTop = MediaQuery.of(context).padding.top + 70;
+    // 窄化访问器：只订阅 size / padding，不订阅 viewInsets，
+    // 因此键盘弹出不会触发本页的 didChangeDependencies。
+    final size = MediaQuery.sizeOf(context);
+    final padding = MediaQuery.paddingOf(context);
+    _mediaHeight = size.height;
+    _mediaPaddingTop = padding.top;
+    final paddingTop = _mediaPaddingTop + 70;
     if (_locaterOffsetNotifier.value < paddingTop) {
       _locaterOffsetNotifier.value = paddingTop;
     }
@@ -211,8 +227,10 @@ class GalleryBodyState extends State<GalleryBody>
   }
 
   void _showDeleteDialog(BuildContext context) {
-    showDialog<String>(
+    showMiuixDialog<String>(
       context: context,
+      // 破坏性操作：不允许下拉关闭，避免误拖让确认框消失
+      dragToDismiss: false,
       builder: (BuildContext context) => AlertDialog(
         title: Text(l10n.deleteThisPhotos),
         content: Text(l10n.cantBeUndone),
@@ -681,7 +699,7 @@ class GalleryBodyState extends State<GalleryBody>
   }
 
   void showDateLocateDialog() {
-    showDialog(
+    showMiuixDialog(
         context: context,
         builder: (context) {
           return Dialog(
@@ -749,8 +767,8 @@ class GalleryBodyState extends State<GalleryBody>
   }
 
   Widget locater() {
-    final totalHeight = MediaQuery.of(context).size.height;
-    final paddingTop = MediaQuery.of(context).padding.top + 70;
+    final totalHeight = MediaQuery.sizeOf(context).height;
+    final paddingTop = MediaQuery.paddingOf(context).top + 70;
     const paddingBottom = 130;
     final avaliabileHeight = totalHeight - paddingBottom - paddingTop;
     List<LocateInfo> mouthLocList = [];
@@ -835,7 +853,7 @@ class GalleryBodyState extends State<GalleryBody>
     final int gridColumns = columCount;
     double totalwidth;
     if (widget.width == null) {
-      totalwidth = MediaQuery.of(context).size.width - (gridColumns + 1) * gridSpacing;
+      totalwidth = MediaQuery.sizeOf(context).width - (gridColumns + 1) * gridSpacing;
     } else {
       totalwidth = widget.width! - (gridColumns + 1) * gridSpacing;
     }
@@ -1493,4 +1511,4 @@ class _ThumbnailLoaderState extends State<_ThumbnailLoader> {
   }
 }
 
-class _CustomScaleGestureRecognizer extends ScaleGestureRecognizer {}
+class _CustomScaleGestureRecognizer extends ScaleGestureRecognizer {}

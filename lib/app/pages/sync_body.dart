@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:img_syncer/app/state/asset.dart';
 import 'package:img_syncer/bridge/storage/storage.dart';
 import 'package:img_syncer/bridge/util.dart';
@@ -243,7 +243,7 @@ class SyncBodyState extends State<SyncBody> {
           Container(
             padding: const EdgeInsets.fromLTRB(0, 0, AppSpacing.xs, AppSpacing.xs),
             alignment: Alignment.bottomRight,
-            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.5),
+            constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.5),
             child: Text(
               syncing
                   ? "${stateModel.syncCompleted}/${stateModel.syncTotal} (${(stateModel.syncPercent * 100).toInt()}%)"
@@ -259,7 +259,7 @@ class SyncBodyState extends State<SyncBody> {
       ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).padding.bottom + 80,
+          bottom: MediaQuery.paddingOf(context).bottom + 80,
         ),
         child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -388,7 +388,7 @@ class SyncBodyState extends State<SyncBody> {
   /// 整表反复重建；改为按需构建后只有可见项参与构建。
   /// [index] 用于估算该项的纵向偏移，据此决定是否加载缩略图。
   Widget _buildAssetRow(BuildContext context, Asset asset, int index) {
-    final totalHeight = MediaQuery.of(context).size.height;
+    final totalHeight = MediaQuery.sizeOf(context).height;
     final currentScrollOffset = index * 72.0; // ListTile 高度
     bool needLoadThumbnail = false;
     if (currentScrollOffset > scrollOffset - (2 * totalHeight) &&

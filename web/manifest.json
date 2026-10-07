@@ -1,6 +1,6 @@
 {
-    "name": "img_syncer",
-    "short_name": "img_syncer",
+    "name": "Pho 社区版",
+    "short_name": "Pho 社区版",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

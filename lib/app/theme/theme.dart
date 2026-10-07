@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
 
 /// M3 完整 textTheme — Inter 拉丁字体 + 系统 CJK fallback
@@ -372,6 +372,19 @@ DropdownMenuThemeData buildDropdownMenuTheme(ColorScheme cs) {
       fillColor: cs.surfaceContainerHighest,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.extraSmall),
+      ),
+    ),
+    // 弹出面板兜底样式：大圆角 + 浅色底 + 无高度阴影，贴合 MIUIX 观感。
+    // 主路径已统一改用 MiuixDropdown*（见 widgets/miuix_dropdown.dart），
+    // 这里保证将来若再用 Material DropdownMenu 也不会退回原始样式。
+    menuStyle: MenuStyle(
+      backgroundColor:
+          WidgetStatePropertyAll<Color>(cs.surfaceContainerLowest),
+      elevation: const WidgetStatePropertyAll<double>(0),
+      shape: WidgetStatePropertyAll<OutlinedBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.extraLarge),
+        ),
       ),
     ),
   );

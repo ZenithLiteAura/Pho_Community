@@ -1,6 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import 'package:img_syncer/app/state/global.dart';
+import 'package:img_syncer/app/pages/settings/settings_about.dart';
 import 'package:img_syncer/app/pages/storage_config_page.dart';
 
 class SettingRoute extends StatefulWidget {
@@ -51,20 +52,21 @@ class _SettingRouteState extends State<SettingRoute> {
                   ),
                 ),
                 
-                // const Divider(height: 10),
-                // ListTile(
-                //   leading: const Icon(Icons.info),
-                //   title: Text(l10n.about, style: const TextStyle(fontSize: 18)),
-                //   onTap: () => showDialog(
-                //     context: context,
-                //     builder: (context) => const Dialog(
-                //       child: SizedBox(
-                //         width: 500,
-                //         child: AboutRoute(),
-                //       ),
-                //     ),
-                //   ),
-                // ),
+                const Divider(height: 10),
+                ListTile(
+                  leading: const Icon(Icons.info),
+                  title: Text(l10n.about,
+                      style: Theme.of(context).textTheme.titleLarge),
+                  onTap: () => showDialog(
+                    context: context,
+                    builder: (context) => const Dialog(
+                      child: SizedBox(
+                        width: 500,
+                        child: SettingsAboutPage(),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

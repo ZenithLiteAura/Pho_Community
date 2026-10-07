@@ -1,10 +1,10 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:math' as math;
-import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 
 import 'package:img_syncer/app/theme/design_tokens.dart';
+import 'package:img_syncer/app/widgets/motion/miuix_glass_surface.dart';
 
 /// 顶部液态玻璃提示条。
 ///
@@ -138,21 +138,16 @@ class _LiquidGlassToastViewState extends State<_LiquidGlassToastView>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
-    final media = MediaQuery.of(context);
+    // 窄化访问器：只订阅 size / padding，不订阅 viewInsets，
+    // 避免键盘弹出时提示条逐帧重建（它含模糊与投影，重建代价不低）。
+    final size = MediaQuery.sizeOf(context);
+    final padding = MediaQuery.paddingOf(context);
 
     // 收窄宽度：左右各留 24，且不超过 420。
-    final maxWidth = math.min(media.size.width - (AppSpacing.lg * 2), _maxWidth);
-
-    // 玻璃底色：浅色用 surface（白），深色用 surfaceContainerHigh（深灰）。
-    final glassBase = isDark ? cs.surfaceContainerHigh : cs.surface;
-    final glassTop = glassBase.withValues(alpha: isDark ? 0.74 : 0.84);
-    final glassBottom = glassBase.withValues(alpha: isDark ? 0.52 : 0.58);
-    // 高光描边：玻璃边缘的细亮线，深色主题下更明显一些。
-    final hairline = cs.onSurface.withValues(alpha: isDark ? 0.16 : 0.10);
+    final maxWidth = math.min(size.width - (AppSpacing.lg * 2), _maxWidth);
 
     return Positioned(
-      top: media.padding.top + AppSpacing.xs,
+      top: padding.top + AppSpacing.xs,
       left: AppSpacing.lg,
       right: AppSpacing.lg,
       child: Center(
@@ -169,7 +164,7 @@ class _LiquidGlassToastViewState extends State<_LiquidGlassToastView>
                   behavior: HitTestBehavior.opaque,
                   onTap: widget.onDismiss,
                   child: DecoratedBox(
-                    // 投影在 ClipRRect 之外，避免被裁剪掉。
+                    // 投影在最外层，避免被玻璃表面裁掉。
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(AppRadius.card),
                       boxShadow: <BoxShadow>[
@@ -180,37 +175,23 @@ class _LiquidGlassToastViewState extends State<_LiquidGlassToastView>
                         ),
                       ],
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(AppRadius.card),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(
-                          sigmaX: _blurSigma,
-                          sigmaY: _blurSigma,
+                    // 复用统一玻璃表面：模糊 + 渐变 + 高光描边 + 凝光
+                    child: MiuixGlassSurface(
+                      borderRadius: AppRadius.card,
+                      blurSigma: _blurSigma,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.sm,
                         ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: <Color>[glassTop, glassBottom],
-                            ),
-                            borderRadius:
-                                BorderRadius.circular(AppRadius.card),
-                            border: Border.all(color: hairline, width: 0.8),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.md,
-                            vertical: AppSpacing.sm,
-                          ),
-                          child: Text(
-                            widget.message,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: cs.onSurface,
-                              fontFamily: AppFonts.body,
-                              height: 1.35,
-                            ),
+                        child: Text(
+                          widget.message,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: cs.onSurface,
+                            fontFamily: AppFonts.body,
+                            height: 1.35,
                           ),
                         ),
                       ),

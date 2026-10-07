@@ -1,4 +1,4 @@
-﻿import 'package:img_syncer/proto/img_syncer.pbgrpc.dart';
+import 'package:img_syncer/proto/img_syncer.pbgrpc.dart';
 import 'package:img_syncer/bridge/run_server.dart';
 import 'package:img_syncer/core/sync_timer.dart';
 import 'package:img_syncer/app/state/state_model.dart';
@@ -15,6 +15,8 @@ import 'dart:io';
 import 'package:img_syncer/app/widgets/liquid_glass_toast.dart';
 
 import 'event_bus.dart';
+import 'package:img_syncer/app/state/webdav_config_store.dart';
+import 'package:img_syncer/app/widgets/motion/miuix_overlay.dart';
 
 late String httpBaseUrl;
 late int grpcPort;
@@ -199,47 +201,40 @@ Future<void> initDrive() async {
       }
       break;
     case Drive.webDav:
-      final url = prefs.getString('webdav_url');
-      final username = prefs.getString('webdav_username');
-      final password = prefs.getString('webdav_password');
-      final root = prefs.getString('webdav_root_path');
-      final insecure = prefs.getBool('webdav_insecure') ?? true;
-      if (url != null && root != null) {
-        final primary = SetDriveWebdavRequest(
-          addr: url,
-          username: username,
-          password: password,
-          root: root,
-          insecure: insecure,
-        );
-        // 备份 WebDAV（可选）：配置后使用双目标（主目标写失败自动回退备份）
-        final backupUrl = prefs.getString('webdav_url2');
-        final backupRoot = prefs.getString('webdav_root_path2');
-        late SetDriveWebdavResponse rsp;
-        if (backupUrl != null && backupUrl.isNotEmpty && backupRoot != null) {
-          rsp = await storage.cli.setDriveWebdavDual(SetDriveWebdavDualRequest(
-            primary: primary,
-            backup: SetDriveWebdavRequest(
-              addr: backupUrl,
-              username: prefs.getString('webdav_username2'),
-              password: prefs.getString('webdav_password2'),
-              root: backupRoot,
-              insecure: prefs.getBool('webdav_insecure2') ?? true,
-            ),
+      // 多配置：读取配置列表 + 当前生效项，**只应用选中的那一条**（无自动回退）。
+      final configs = await WebdavConfigStore.load(prefs);
+      final activeId = await WebdavConfigStore.loadActiveId(prefs);
+      final active = WebdavConfigStore.activeOf(configs, activeId);
+      if (active != null) {
+        // active id 缺失或指向已删除的配置时，会回退到第一条，这里纠正持久化值。
+        if (active.id != activeId) {
+          await WebdavConfigStore.saveActiveId(active.id, prefs);
+        }
+        if (active.isUsable) {
+          final rsp = await storage.cli.setDriveWebdav(SetDriveWebdavRequest(
+            addr: active.url,
+            username: active.username,
+            password: active.password,
+            root: active.rootPath,
+            insecure: active.insecure,
           ));
-          logger.addLog("set drive webdav dual (primary + backup)");
+          if (rsp.success) {
+            logger.addLog("set drive webdav success (config: ${active.name})");
+            settingModel.setRemoteStorageSetted(true);
+            eventBus.fire(RemoteRefreshEvent(refreshUnSync: false));
+          } else {
+            settingModel.setRemoteStorageSetted(false);
+            assetModel.remoteLastError = rsp.message;
+          }
         } else {
-          rsp = await storage.cli.setDriveWebdav(primary);
-          logger.addLog("set drive webdav single");
-        }
-        if (rsp.success) {
-          logger.addLog("set drive webdav success");
-          settingModel.setRemoteStorageSetted(true);
-          eventBus.fire(RemoteRefreshEvent(refreshUnSync: false));
-        } else {
+          logger.addLog("webdav: active config incomplete, storage not set");
           settingModel.setRemoteStorageSetted(false);
-          assetModel.remoteLastError = rsp.message;
         }
+      } else {
+        // 配置列表为空（用户已删空）或尚未迁移出任何配置：视为未配置存储。
+        // 用户下次进入 WebDAV 配置页时会自动补一个「配置1」。
+        logger.addLog("webdav: no config, storage not set");
+        settingModel.setRemoteStorageSetted(false);
       }
       break;
     case Drive.nfs:
@@ -320,7 +315,7 @@ Future<bool> requestPermission({alert = true}) async {
     if (alert) {
       result = false;
       if (requestPermissionContext != null) {
-        showDialog(
+        showMiuixDialog(
             context: requestPermissionContext!,
             builder: (BuildContext context) => AlertDialog(
                   title: Text(l10n.needPermision),
@@ -348,3 +343,4 @@ Future<bool> requestPermission({alert = true}) async {
   requesttingPermission = null;
   return result;
 }
+

@@ -8,6 +8,7 @@ import 'package:img_syncer/app/theme/design_tokens.dart';
 import 'package:img_syncer/app/pages/storage_config_page.dart';
 import 'package:img_syncer/app/state/global.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:img_syncer/app/widgets/motion/miuix_overlay.dart';
 
 /// 简化版设置页：选择相册、云存储、后台同步、清除缓存、关于。
 /// 开源版本，无 Pro 功能门控、无购买入口。
@@ -109,7 +110,7 @@ class SettingsRouteState extends State<SettingsRoute> {
   }
 
   void showClearCacheDialog(BuildContext context) {
-    showDialog(
+    showMiuixDialog(
         context: context,
         builder: (context) {
           return Dialog(
@@ -197,3 +198,4 @@ class AboutRoute extends StatelessWidget {
     );
   }
 }
+

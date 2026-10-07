@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import 'package:img_syncer/app/state/global.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
@@ -6,8 +6,9 @@ import 'package:img_syncer/app/pages/settings/settings_theme.dart';
 import 'package:img_syncer/app/pages/settings/settings_dark_mode.dart';
 import 'package:img_syncer/app/pages/settings/settings_dock.dart';
 import 'package:img_syncer/app/pages/settings/settings_gallery_columns.dart';
+import 'package:img_syncer/app/pages/settings/settings_motion.dart';
 
-/// 二级页：外观与主题 —— 4 个标题入口，具体配置全部在三级页中完成。
+/// 二级页：外观与主题 —— 5 个标题入口，具体配置全部在三级页中完成。
 class SettingsAppearancePage extends StatelessWidget {
   const SettingsAppearancePage({Key? key}) : super(key: key);
 
@@ -63,6 +64,17 @@ class SettingsAppearancePage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => const SettingsGalleryColumnsPage(),
+                    ),
+                  ),
+                ),
+                _titleTile(
+                  context,
+                  icon: Icons.animation_outlined,
+                  title: l10n.motion,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsMotionPage(),
                     ),
                   ),
                 ),

@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +8,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:img_syncer/app/state/global.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
 import 'package:img_syncer/app/pages/settings/backup_manager.dart';
+import 'package:img_syncer/app/widgets/motion/miuix_overlay.dart';
 
 /// 二级页：数据管理 —— 备份、恢复、清除缓存。
 class SettingsDataManagementPage extends StatelessWidget {
@@ -128,8 +129,10 @@ class SettingsDataManagementPage extends StatelessWidget {
   }
 
   Future<void> _restore(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showMiuixDialog<bool>(
       context: context,
+      // 破坏性操作：不允许下拉关闭
+      dragToDismiss: false,
       builder: (context) => AlertDialog(
         title: Text(l10n.restoreFromBackup),
         content: Text(l10n.restoreConfirm),
@@ -174,7 +177,7 @@ class SettingsDataManagementPage extends StatelessWidget {
   }
 
   void _showClearCacheDialog(BuildContext context) {
-    showDialog(
+    showMiuixDialog(
       context: context,
       builder: (context) => Dialog(
         child: Column(
@@ -213,3 +216,4 @@ class SettingsDataManagementPage extends StatelessWidget {
     );
   }
 }
+

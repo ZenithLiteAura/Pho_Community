@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +9,7 @@ import 'package:img_syncer/bridge/util.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:img_syncer/bridge/storage/storage.dart';
-import 'package:img_syncer/app/theme/design_tokens.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 import '../state/event_bus.dart';
 import 'package:extended_image/extended_image.dart';
@@ -18,6 +18,7 @@ import 'package:img_syncer/app/state/global.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:gal/gal.dart';
 import 'package:video_player/video_player.dart';
+import 'package:img_syncer/app/widgets/motion/miuix_overlay.dart';
 
 class GalleryViewerRoute extends StatefulWidget {
   const GalleryViewerRoute({
@@ -110,13 +111,12 @@ class GalleryViewerRouteState extends State<GalleryViewerRoute>
       return;
     }
     _isShowingImageInfo = true;
-    showModalBottomSheet(
+    showMiuixOverlay(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(AppRadius.extraLarge)),
-      ),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
+      // 底部对齐：贴底、通栏、仅上方圆角（保持原 showModalBottomSheet 的观感）
+      bottomAligned: true,
+      // 内容自带抓手，故不再叠加浮层抓手
+      showGrip: false,
       builder: (BuildContext context) {
         final theme = Theme.of(context);
         final colorScheme = theme.colorScheme;
@@ -280,8 +280,10 @@ class GalleryViewerRouteState extends State<GalleryViewerRoute>
   }
 
   void deleteCurrent(BuildContext context) {
-    showDialog<String>(
+    showMiuixDialog<String>(
       context: context,
+      // 破坏性操作：不允许下拉关闭
+      dragToDismiss: false,
       builder: (BuildContext context) => AlertDialog(
         title: Text(l10n.deleteThisPhoto),
         content: Text(l10n.cantBeUndone),
@@ -544,7 +546,7 @@ class GalleryViewerRouteState extends State<GalleryViewerRoute>
         },
         child: Container(
           constraints: BoxConstraints.expand(
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery.sizeOf(context).height,
           ),
           child: Stack(
             children: [
@@ -614,7 +616,7 @@ class GalleryViewerRouteState extends State<GalleryViewerRoute>
                                 if (n.toLowerCase().contains(".heic") ||
                                     n.toLowerCase().contains(".hevc")) {
                                   if (Platform.isWindows) {
-                                    showDialog(
+                                    showMiuixDialog(
                                         context: SnackBarManager.globalContext!,
                                         builder: (context) {
                                           return AlertDialog(
@@ -731,9 +733,9 @@ class GalleryViewerRouteState extends State<GalleryViewerRoute>
                         },
                       ),
                       Positioned(
-                          top: MediaQuery.of(context).padding.top,
+                          top: MediaQuery.paddingOf(context).top,
                           left: 0,
-                          width: MediaQuery.of(context).size.width,
+                          width: MediaQuery.sizeOf(context).width,
                           child: ValueListenableBuilder<double>(
                             valueListenable: all[index].imageLoadProgress,
                             builder: (context, progress, child) {
@@ -790,3 +792,4 @@ class GalleryViewerRouteState extends State<GalleryViewerRoute>
     );
   }
 }
+

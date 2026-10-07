@@ -750,4 +750,146 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get galleryColumnCountDesc => '滑动调节预览页相册列数（2-10）';
+
+  @override
+  String get activeConfig => '当前配置';
+
+  @override
+  String get newConfig => '新建配置';
+
+  @override
+  String get renameConfig => '重命名配置';
+
+  @override
+  String get deleteConfig => '删除配置';
+
+  @override
+  String get configName => '配置名称';
+
+  @override
+  String get configNamePrefix => '配置';
+
+  @override
+  String get configNameEmpty => '配置名称不能为空';
+
+  @override
+  String get deleteConfigConfirm => '确定删除该配置？此操作不可撤销。';
+
+  @override
+  String get noConfigYet => '暂无配置，请点击「新建配置」';
+
+  @override
+  String get configNotReady => '该配置尚未填写地址与根路径';
+
+  @override
+  String get configSaved => '配置已保存';
+
+  @override
+  String get motion => '动效';
+
+  @override
+  String get motionFull => '完整';
+
+  @override
+  String get motionSimple => '简约';
+
+  @override
+  String get motionOff => '关闭';
+
+  @override
+  String get motionDescFull => '从手指按下处展开，凝光跟随手指，浮层可下拉关闭并带果冻回弹';
+
+  @override
+  String get motionDescSimple => '从手指按下处展开，轻量凝光，浮层可下拉关闭';
+
+  @override
+  String get motionDescOff => '不做展开形变与凝光，浮层直接出现（最省电）';
+
+  @override
+  String get startupNoticeTitle => '版权与致谢';
+
+  @override
+  String get startupNoticeCopyright => '版权所有';
+
+  @override
+  String get startupNoticeOriginalAuthor => '原作者';
+
+  @override
+  String get startupNoticeCommunityBuild => '社区发行版维护';
+
+  @override
+  String get startupNoticeModified => '本版本为社区发行版，已对原作品做出修改';
+
+  @override
+  String get startupNoticeSupport =>
+      '如果这个应用对你有帮助，建议前往原作者仓库 Star 或反馈问题，支持原作者继续维护。';
+
+  @override
+  String get startupNoticeLinkHint => '原作者仓库';
+
+  @override
+  String get startupNoticeSecondsLeft => '秒后可关闭';
+
+  @override
+  String get startupNoticeCanCloseNow => '现在可以关闭了';
+
+  @override
+  String get startupNoticeClose => '关闭';
+
+  @override
+  String get openInBrowser => '在浏览器打开';
+
+  @override
+  String get aboutOriginalAuthor => '原作者';
+
+  @override
+  String get aboutCommunityBuild => '社区发行版';
+
+  @override
+  String get aboutLicense => '开源许可证';
+
+  @override
+  String get advancedSettings => '高级设置';
+
+  @override
+  String get disableStartupNotice => '关闭启动前弹窗';
+
+  @override
+  String get disableStartupNoticeDesc => '关闭后，从下次启动起不再显示版权弹窗';
+
+  @override
+  String get checkForUpdate => '检查更新';
+
+  @override
+  String get checkForUpdateDesc => '在 GitHub 上检查是否有新的发行版本';
+
+  @override
+  String get checkingUpdate => '正在检查…';
+
+  @override
+  String get updateLatest => '已是最新版本';
+
+  @override
+  String get updateCheckFailed => '检查更新失败，请检查网络后重试';
+
+  @override
+  String get updateAvailableTitle => '发现新版本';
+
+  @override
+  String get updateAvailableBody => 'GitHub 上已有更新的发行版本，建议前往下载';
+
+  @override
+  String get updateReleaseNotes => '更新说明';
+
+  @override
+  String get updateGoDownload => '前往下载';
+
+  @override
+  String get updateLater => '稍后';
+
+  @override
+  String get autoCheckUpdate => '启动时自动检查更新';
+
+  @override
+  String get autoCheckUpdateDesc => '启动后自动在 GitHub 上检查发行版本，有新版时弹窗提示';
 }

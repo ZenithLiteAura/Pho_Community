@@ -8,7 +8,7 @@
 PRODUCT_NAME = pho
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.ZenithLiteAura.app.pho
+PRODUCT_BUNDLE_IDENTIFIER = com.ZenithLiteAura.app.pho.community
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2026 ZenithLiteAura. All rights reserved.
+PRODUCT_COPYRIGHT = Pho 社区版 (社区发行版) — 基于原作者 fregie 的 Pho (GPL-3.0)；社区维护 ZenithLiteAura。

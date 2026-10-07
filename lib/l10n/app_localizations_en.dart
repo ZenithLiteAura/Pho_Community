@@ -776,4 +776,154 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get galleryColumnCountDesc =>
       'Slide to adjust the gallery column count (2-10)';
+
+  @override
+  String get activeConfig => 'Current profile';
+
+  @override
+  String get newConfig => 'New profile';
+
+  @override
+  String get renameConfig => 'Rename profile';
+
+  @override
+  String get deleteConfig => 'Delete profile';
+
+  @override
+  String get configName => 'Profile name';
+
+  @override
+  String get configNamePrefix => 'Profile ';
+
+  @override
+  String get configNameEmpty => 'Profile name cannot be empty';
+
+  @override
+  String get deleteConfigConfirm =>
+      'Delete this profile? This cannot be undone.';
+
+  @override
+  String get noConfigYet => 'No profiles yet — tap \"New profile\"';
+
+  @override
+  String get configNotReady => 'Profile is missing URL or root path';
+
+  @override
+  String get configSaved => 'Profile saved';
+
+  @override
+  String get motion => 'Motion';
+
+  @override
+  String get motionFull => 'Full';
+
+  @override
+  String get motionSimple => 'Simple';
+
+  @override
+  String get motionOff => 'Off';
+
+  @override
+  String get motionDescFull =>
+      'Expands from your finger, bloom follows it, overlays pull down to dismiss with a jelly bounce';
+
+  @override
+  String get motionDescSimple =>
+      'Expands from your finger with a light bloom; overlays pull down to dismiss';
+
+  @override
+  String get motionDescOff =>
+      'No expand morph or bloom; overlays just appear (most efficient)';
+
+  @override
+  String get startupNoticeTitle => 'Copyright & Credits';
+
+  @override
+  String get startupNoticeCopyright => 'Copyright';
+
+  @override
+  String get startupNoticeOriginalAuthor => 'Original author';
+
+  @override
+  String get startupNoticeCommunityBuild => 'Community build maintained by';
+
+  @override
+  String get startupNoticeModified =>
+      'This community build modifies the original work';
+
+  @override
+  String get startupNoticeSupport =>
+      'If this app is useful to you, please star the original author\'s repository or report issues there to support its continued maintenance.';
+
+  @override
+  String get startupNoticeLinkHint => 'Original author\'s repository';
+
+  @override
+  String get startupNoticeSecondsLeft => 's until you can close';
+
+  @override
+  String get startupNoticeCanCloseNow => 'You can close this now';
+
+  @override
+  String get startupNoticeClose => 'Close';
+
+  @override
+  String get openInBrowser => 'Open in browser';
+
+  @override
+  String get aboutOriginalAuthor => 'Original author';
+
+  @override
+  String get aboutCommunityBuild => 'Community build';
+
+  @override
+  String get aboutLicense => 'License';
+
+  @override
+  String get advancedSettings => 'Advanced settings';
+
+  @override
+  String get disableStartupNotice => 'Disable startup notice';
+
+  @override
+  String get disableStartupNoticeDesc =>
+      'When enabled, the copyright notice will no longer appear from the next launch';
+
+  @override
+  String get checkForUpdate => 'Check for updates';
+
+  @override
+  String get checkForUpdateDesc => 'Check GitHub for a newer release';
+
+  @override
+  String get checkingUpdate => 'Checking…';
+
+  @override
+  String get updateLatest => 'You are up to date';
+
+  @override
+  String get updateCheckFailed =>
+      'Update check failed - please check your network and retry';
+
+  @override
+  String get updateAvailableTitle => 'Update available';
+
+  @override
+  String get updateAvailableBody => 'A newer release is available on GitHub';
+
+  @override
+  String get updateReleaseNotes => 'Release notes';
+
+  @override
+  String get updateGoDownload => 'Download';
+
+  @override
+  String get updateLater => 'Later';
+
+  @override
+  String get autoCheckUpdate => 'Check for updates at startup';
+
+  @override
+  String get autoCheckUpdateDesc =>
+      'Check GitHub for a newer release at startup and notify you';
 }

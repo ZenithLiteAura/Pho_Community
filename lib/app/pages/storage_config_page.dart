@@ -1,5 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
+import 'package:img_syncer/app/widgets/miuix_dropdown.dart';
 import 'package:img_syncer/app/widgets/storageform/smbform.dart';
 import 'package:img_syncer/app/widgets/storageform/webdavform.dart';
 import 'package:img_syncer/app/widgets/storageform/nfsform.dart';
@@ -87,45 +88,22 @@ class StorageConfigBodyState extends State<StorageConfigBody> {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                Container(
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(AppRadius.input),
-                  ),
-                  child: DropdownButtonFormField<Drive>(
-                    value: currentDrive,
-                    decoration: InputDecoration(
-                      labelText: l10n.storageProtocol,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.input),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.sm + 2,
-                      ),
-                    ),
-                    items: driveName.entries.map((entry) {
-                      return DropdownMenuItem<Drive>(
-                        value: entry.key,
-                        child: Text(
-                          entry.value,
-                          style: textTheme.bodyLarge?.copyWith(
-                            fontFamily: AppFonts.body,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (Drive? newValue) {
-                      if (newValue != null) {
-                        // 只切换展示的表单，不写 prefs：drive 由表单的「保存」写入，
-                        // 避免未保存就改掉 drive 导致已有存储配置失效。
-                        setState(() {
-                          currentDrive = newValue;
-                        });
-                      }
-                    },
-                  ),
+                MiuixDropdownField<Drive>(
+                  label: l10n.storageProtocol,
+                  value: currentDrive,
+                  items: driveName.entries
+                      .map((entry) => MiuixDropdownItem<Drive>(
+                            value: entry.key,
+                            label: entry.value,
+                          ))
+                      .toList(),
+                  onChanged: (Drive newValue) {
+                    // 只切换展示的表单，不写 prefs：drive 由表单的「保存」写入，
+                    // 避免未保存就改掉 drive 导致已有存储配置失效。
+                    setState(() {
+                      currentDrive = newValue;
+                    });
+                  },
                 ),
               ],
             ),

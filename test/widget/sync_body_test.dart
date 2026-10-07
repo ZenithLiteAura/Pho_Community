@@ -1,4 +1,4 @@
-﻿import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:img_syncer/app/state/asset.dart';
 import 'package:img_syncer/app/state/state_model.dart';
 import 'package:img_syncer/app/pages/sync_body.dart';
@@ -53,7 +53,7 @@ void main() {
     settingModel = SettingModel();
   });
 
-  group('shouldSyncAsset 过滤一致性', () {
+  group('shouldSyncAsset 同步判定', () {
     test('已上传的资源被过滤', () {
       final asset = _TestAsset(
           id: 'test1', isVideoFlag: false, dateCreated: DateTime(2024, 6, 1));
@@ -72,77 +72,22 @@ void main() {
       );
     });
 
-    test('filterNoVideo 过滤视频', () {
-      final sm = SettingModel();
-      sm.setFilterSwitch(true);
-      sm.setFilterNoVideo(true);
-      final video =
-          _TestAsset(id: 'v1', isVideoFlag: true, dateCreated: DateTime(2024, 6, 1));
-      expect(callShouldSync(video, sm: sm), isFalse);
+    test('已上传表为空时全部通过', () {
+      final photos = [
+        _TestAsset(id: 'p1', isVideoFlag: false, dateCreated: DateTime(2024, 6, 1)),
+        _TestAsset(id: 'p2', isVideoFlag: true, dateCreated: DateTime(2024, 6, 2)),
+        _TestAsset(id: 'p3', isVideoFlag: false, dateCreated: DateTime(2024, 6, 3)),
+      ];
+      for (final p in photos) {
+        expect(callShouldSync(p, uploadedIds: {}), isTrue);
+      }
     });
 
-    test('filterNoImage 过滤图片', () {
-      final sm = SettingModel();
-      sm.setFilterSwitch(true);
-      sm.setFilterNoImage(true);
-      final image =
-          _TestAsset(id: 'i1', isVideoFlag: false, dateCreated: DateTime(2024, 6, 1));
-      expect(callShouldSync(image, sm: sm), isFalse);
-    });
-
-    test('filterAfter 过滤过旧的照片', () {
-      final sm = SettingModel();
-      sm.setFilterSwitch(true);
-      sm.setFilterAfter(DateTime(2024, 6, 15));
-      final oldPhoto =
-          _TestAsset(id: 'old1', isVideoFlag: false, dateCreated: DateTime(2024, 6, 1));
-      expect(callShouldSync(oldPhoto, sm: sm), isFalse);
-    });
-
-    test('filterBefore 不过滤同日照片（不含 +1天偏差）', () {
-      // BUG 修复核心：columnBuilder 之前用了 .add(Duration(days: 1))
-      // 现在统一为 isAfter(filterBefore!) 不含偏移
-      final sm = SettingModel();
-      sm.setFilterSwitch(true);
-      sm.setFilterBefore(DateTime(2024, 6, 1));
-      final sameDay = _TestAsset(
-          id: 'same', isVideoFlag: false, dateCreated: DateTime(2024, 6, 1));
-      // 同日 != isAfter，通过
-      expect(callShouldSync(sameDay, sm: sm), isTrue);
-
-      final nextDay = _TestAsset(
-          id: 'next', isVideoFlag: false, dateCreated: DateTime(2024, 6, 2));
-      // 6/2 > 6/1 → isAfter → 被过滤
-      expect(callShouldSync(nextDay, sm: sm), isFalse);
-    });
-
-    test('filterTypeMap 根据扩展名过滤', () {
-      final sm = SettingModel();
-      sm.setFilterSwitch(true);
-      sm.filterTypeMap['.gif'] = false;
-      final gif = _TestAsset(
-          id: 'g1',
-          isVideoFlag: false,
-          dateCreated: DateTime(2024, 6, 1),
-          title: 'test.gif');
-      expect(callShouldSync(gif, sm: sm), isFalse);
-
-      final jpg = _TestAsset(
-          id: 'j1',
-          isVideoFlag: false,
-          dateCreated: DateTime(2024, 6, 1),
-          title: 'test.jpg');
-      expect(callShouldSync(jpg, sm: sm), isTrue);
-    });
-
-    test('filter 未启用时全部通过', () {
-      final sm = SettingModel();
-      sm.setFilterSwitch(false);
-      sm.setFilterNoVideo(true);
-      final video =
-          _TestAsset(id: 'v2', isVideoFlag: true, dateCreated: DateTime(2024, 6, 1));
-      expect(callShouldSync(video, sm: sm), isTrue);
-    });
+    // 说明：开源版已移除 Pro 的过滤逻辑（见 lib/core/sync/background_runner.dart
+    // shouldSyncAsset 的注释「开源版仅检查是否已上传；Pro 版过滤逻辑已移除」）。
+    // 原先针对 setFilterSwitch / setFilterNoVideo / setFilterNoImage /
+    // setFilterAfter / setFilterBefore / filterTypeMap 的 6 个用例依赖的
+    // SettingModel API 在开源版中已不存在，故随实现一并移除。
   });
 
   group('failedTimes 断连检测', () {
