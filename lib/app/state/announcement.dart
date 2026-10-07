@@ -65,6 +65,7 @@ class Announcement {
     this.minVersion,
     this.maxVersion,
     this.once = true,
+    this.updatedAt,
   });
 
   /// 唯一标识：换 id 才会再次弹出（`once` 为 true 时）。
@@ -88,6 +89,12 @@ class Announcement {
 
   /// true = 同一 id 只弹一次。
   final bool once;
+
+  /// 云端最后一次修改时间（发布工具会写入）。
+  ///
+  /// 客户端据此在多个镜像源之间**取最新的一份**：CDN 的分支缓存最长会有 12 小时
+  /// 的滞后，靠优先级顺序挑源会拿到旧公告，靠这个字段就能自动选到新的。
+  final DateTime? updatedAt;
 
   /// `critical` 不可通过遮罩/返回键关闭。
   bool get dismissible => level != AnnouncementLevel.critical;
@@ -141,6 +148,7 @@ class Announcement {
       minVersion: _parseVersion(map['minVersion']),
       maxVersion: _parseVersion(map['maxVersion']),
       once: map['once'] is bool ? map['once'] as bool : true,
+      updatedAt: _parseDate(map['updatedAt']),
     );
   }
 
@@ -299,10 +307,13 @@ class AnnouncementGate {
 /// 某个公告源的返回值：区分「没拿到」（failed）和「拿到了但是关闭状态」（ok + null）。
 @immutable
 class AnnouncementFetch {
-  const AnnouncementFetch({required this.ok, this.announcement});
+  const AnnouncementFetch({required this.ok, this.announcement, this.updatedAt});
 
   final bool ok;
   final Announcement? announcement;
+
+  /// 该源返回的 updatedAt（即使 enabled=false 也照读），用于跨源比较新旧。
+  final DateTime? updatedAt;
 }
 
 /// 并发请求全部公告源，按 [announcementSources] 的优先级取第一个合法结果。
@@ -322,22 +333,65 @@ Future<AnnouncementFetchReport> fetchAnnouncementReport({
   final results = await Future.wait(
     announcementSources.map((url) => _fetchOne(url, timeout)),
   );
-  for (final r in results) {
-    if (r.ok) {
-      return AnnouncementFetchReport(
-        anySourceUsable: true,
-        announcement: r.announcement,
-      );
+  return selectNewestAnnouncement(results);
+}
+
+/// 从多条源的返回里挑出「最新的一份」。
+///
+/// 规则（[results] 必须按 [announcementSources] 的优先级顺序传入）：
+/// 1. 先按优先级取第一条可用源作为基准；
+/// 2. 之后任何带 `updatedAt` 的源，只要比基准更新（或基准没有 `updatedAt`）就取代它；
+/// 3. 结果里的 `announcement == null` 表示「最新的那份是关闭状态」——
+///    此时**不能**回退到更旧的源，否则会把已经下线的公告又弹出来。
+///
+/// 这样 CDN 分支缓存里的旧副本会被 raw / Pages 上的新副本自动压过。
+AnnouncementFetchReport selectNewestAnnouncement(
+    List<AnnouncementFetch> results) {
+  var bestIndex = -1;
+  DateTime? bestAt;
+  for (var i = 0; i < results.length; i++) {
+    final r = results[i];
+    if (!r.ok) continue;
+    if (bestIndex < 0) {
+      bestIndex = i;
+      bestAt = r.updatedAt;
+      continue;
+    }
+    final at = r.updatedAt;
+    if (at != null && (bestAt == null || at.isAfter(bestAt))) {
+      bestIndex = i;
+      bestAt = at;
     }
   }
-  return const AnnouncementFetchReport(anySourceUsable: false);
+  if (bestIndex < 0) {
+    return const AnnouncementFetchReport(anySourceUsable: false);
+  }
+  return AnnouncementFetchReport(
+    anySourceUsable: true,
+    announcement: results[bestIndex].announcement,
+  );
 }
 
 Future<AnnouncementFetch> _fetchOne(String url, Duration timeout) async {
   final text = await fetchText(url, timeout: timeout);
   if (text == null) return const AnnouncementFetch(ok: false);
-  final announcement = Announcement.parse(text);
-  // 能解析出 JSON 结构（含 enabled:false）就算这条源可用，不再回退到更旧的缓存。
-  final looksLikeJson = text.trimLeft().startsWith('{');
-  return AnnouncementFetch(ok: looksLikeJson, announcement: announcement);
+  // 能解析出 JSON 结构（含 enabled:false）就算这条源可用。
+  if (!text.trimLeft().startsWith('{')) {
+    return const AnnouncementFetch(ok: false);
+  }
+  DateTime? updatedAt;
+  try {
+    final decoded = jsonDecode(text);
+    if (decoded is Map) {
+      final raw = decoded['updatedAt']?.toString() ?? '';
+      if (raw.isNotEmpty) updatedAt = DateTime.tryParse(raw);
+    }
+  } catch (_) {
+    // 忽略：updatedAt 只是优化项
+  }
+  return AnnouncementFetch(
+    ok: true,
+    announcement: Announcement.parse(text),
+    updatedAt: updatedAt,
+  );
 }

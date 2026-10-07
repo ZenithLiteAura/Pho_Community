@@ -120,6 +120,8 @@ String buildAnnouncementJson({
   final map = <String, Object?>{
     'enabled': true,
     'id': id.trim(),
+    // 客户端用它跨镜像源挑「最新的一份」，避免被 CDN 的旧缓存盖住。
+    'updatedAt': DateTime.now().toUtc().toIso8601String(),
     'level': level,
     'title': {'zh': titleZh.trim(), 'en': titleEn.trim()},
     'body': {'zh': bodyZh.trim(), 'en': bodyEn.trim()},
@@ -138,6 +140,7 @@ String buildDisabledAnnouncementJson({String id = 'disabled'}) {
   final map = <String, Object?>{
     'enabled': false,
     'id': id,
+    'updatedAt': DateTime.now().toUtc().toIso8601String(),
     'level': 'info',
     'title': {'zh': '', 'en': ''},
     'body': {'zh': '', 'en': ''},
