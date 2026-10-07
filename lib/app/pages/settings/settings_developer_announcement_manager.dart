@@ -7,6 +7,7 @@ import 'package:img_syncer/app/state/announcement.dart';
 import 'package:img_syncer/app/state/announcement_dev_tools.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
 import 'package:img_syncer/app/widgets/liquid_glass_toast.dart';
+import 'package:img_syncer/app/widgets/miuix_dropdown.dart';
 import 'package:img_syncer/l10n/app_localizations.dart';
 
 /// 开发者选项 → 公告 → 公告管理工具。
@@ -38,6 +39,9 @@ class _SettingsDeveloperAnnouncementManagerPageState
   final TextEditingController _bodyEnCtrl = TextEditingController();
   final TextEditingController _urlCtrl = TextEditingController();
   String _level = 'info';
+
+  /// 动作菜单的锚点：用按下位置，让 MIUIX 菜单贴着手指那坨冒出来。
+  Offset? _menuAnchor;
 
   @override
   void initState() {
@@ -120,6 +124,35 @@ class _SettingsDeveloperAnnouncementManagerPageState
         });
         _toast(r.ok ? '已读取历史：${r.message}' : '读取历史失败：${r.message}');
       });
+
+  /// 历史行的动作菜单：与下拉共用同一套 MIUIX 锚定面板。
+  Future<void> _openHistoryActions(AnnouncementRevision rev) async {
+    final l10n = AppLocalizations.of(context)!;
+    final at = _menuAnchor ?? Offset.zero;
+    final picked = await showMiuixActionMenu(
+      context: context,
+      title: rev.shortSha,
+      anchorRect: Rect.fromLTWH(at.dx - 18, at.dy - 44, 36, 36),
+      items: [
+        MiuixActionItem(
+          label: l10n.devLoadIntoForm,
+          summary: '填入下方表单',
+          icon: Icons.edit_note,
+        ),
+        MiuixActionItem(
+          label: l10n.devRestore,
+          summary: '重新提交为最新',
+          icon: Icons.history,
+        ),
+      ],
+    );
+    if (!mounted || picked == null) return;
+    if (picked == 0) {
+      await _loadIntoForm(rev);
+    } else if (picked == 1) {
+      await _restore(rev);
+    }
+  }
 
   Future<void> _loadIntoForm(AnnouncementRevision rev) => _run(() async {
         final text =
@@ -317,24 +350,20 @@ class _SettingsDeveloperAnnouncementManagerPageState
                   for (final rev in _history) ...[
                     ListTile(
                       dense: true,
-                      title: Text(rev.shortSha + '  ' + rev.message,
+                      title: Text('${rev.shortSha}  ${rev.message}',
                           maxLines: 2, overflow: TextOverflow.ellipsis),
                       subtitle: Text(
                         '${rev.date ?? ''}  ${rev.author ?? ''}',
                         style: textTheme.bodySmall
                             ?.copyWith(color: scheme.onSurfaceVariant),
                       ),
-                      trailing: PopupMenuButton<String>(
-                        onSelected: (v) {
-                          if (v == 'load') _loadIntoForm(rev);
-                          if (v == 'restore') _restore(rev);
-                        },
-                        itemBuilder: (_) => [
-                          PopupMenuItem(
-                              value: 'load', child: Text(l10n.devLoadIntoForm)),
-                          PopupMenuItem(
-                              value: 'restore', child: Text(l10n.devRestore)),
-                        ],
+                      trailing: GestureDetector(
+                        onTapDown: (d) => _menuAnchor = d.globalPosition,
+                        onTap: () => _openHistoryActions(rev),
+                        child: const Padding(
+                          padding: EdgeInsets.all(AppSpacing.xs),
+                          child: Icon(Icons.more_horiz),
+                        ),
                       ),
                     ),
                     const Divider(height: 1),
@@ -357,18 +386,18 @@ class _SettingsDeveloperAnnouncementManagerPageState
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  DropdownButtonFormField<String>(
+                  MiuixDropdownField<String>(
+                    label: l10n.devLevel,
                     value: _level,
-                    decoration: InputDecoration(
-                      labelText: l10n.devLevel,
-                      border: const OutlineInputBorder(),
-                    ),
                     items: const [
-                      DropdownMenuItem(value: 'info', child: Text('info')),
-                      DropdownMenuItem(value: 'warning', child: Text('warning')),
-                      DropdownMenuItem(value: 'critical', child: Text('critical')),
+                      MiuixDropdownItem(
+                          value: 'info', label: 'info', summary: '普通通知'),
+                      MiuixDropdownItem(
+                          value: 'warning', label: 'warning', summary: '提醒'),
+                      MiuixDropdownItem(
+                          value: 'critical', label: 'critical', summary: '强制展示'),
                     ],
-                    onChanged: (v) => setState(() => _level = v ?? 'info'),
+                    onChanged: (v) => setState(() => _level = v),
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   TextField(

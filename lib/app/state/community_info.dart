@@ -12,7 +12,7 @@ library;
 const String communityAppName = 'Pho 社区版';
 
 /// 发行版版本号（与 pubspec.yaml 的 `version` 保持同步）。
-const String communityVersion = '3.4.6';
+const String communityVersion = '3.4.7';
 
 /// 原作者。
 const String originalAuthor = 'fregie';
