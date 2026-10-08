@@ -186,6 +186,30 @@ class MiuixOverlayHostState<T> extends State<MiuixOverlayHost<T>>
         : BorderRadius.circular(AppRadius.extraLarge);
 
     Widget content = widget.builder(context);
+
+    // 玻璃盒本身就是唯一的面板。AlertDialog（以及任何 Material 对话框）自带一层
+    // 不透明表面 + elevation + insetPadding，套在玻璃盒里就会看到「外面一层模糊框、
+    // 里面一层更小的实心框」两个大小不一的框 —— 这里把它让掉：
+    // 背景透明、无阴影、无内边距，只保留 AlertDialog 自己的内容排版。
+    if (widget.wrapInGlass) {
+      final base = Theme.of(context);
+      content = Theme(
+        data: base.copyWith(
+          dialogTheme: base.dialogTheme.copyWith(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            shadowColor: Colors.transparent,
+            surfaceTintColor: Colors.transparent,
+            insetPadding: EdgeInsets.zero,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.zero,
+            ),
+          ),
+        ),
+        child: content,
+      );
+    }
+
     if (widget.showGrip) {
       content = Column(
         mainAxisSize: MainAxisSize.min,
