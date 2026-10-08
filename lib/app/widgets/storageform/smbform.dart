@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:img_syncer/app/state/event_bus.dart';
 import 'package:img_syncer/proto/img_syncer.pbgrpc.dart';
 import 'package:img_syncer/app/state/state_model.dart';
@@ -333,7 +333,6 @@ class _SMBFormState extends State<SMBForm> {
                     Container(
                       padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
                       width: 120,
-                      height: 55,
                       child: OutlinedButton(
                         child: const Text("Cancel"),
                         onPressed: () {
@@ -344,7 +343,6 @@ class _SMBFormState extends State<SMBForm> {
                     Container(
                       padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
                       width: 120,
-                      height: 55,
                       child: FilledButton(
                         child: const Text("Save"),
                         onPressed: () {

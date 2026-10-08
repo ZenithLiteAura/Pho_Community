@@ -649,7 +649,6 @@ class WebDavFormState extends State<WebDavForm> {
                     Container(
                       padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
                       width: 120,
-                      height: 55,
                       child: OutlinedButton(
                         child: Text(l10n.cancel),
                         onPressed: () {
@@ -660,7 +659,6 @@ class WebDavFormState extends State<WebDavForm> {
                     Container(
                       padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
                       width: 120,
-                      height: 55,
                       child: FilledButton(
                         child: Text(l10n.save),
                         onPressed: () {

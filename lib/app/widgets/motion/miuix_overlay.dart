@@ -74,7 +74,10 @@ Future<T?> showMiuixDialog<T>({
   // 默认关闭拖拽：这类弹层不需要「拖着关」，裸指针拖拽也容易和内容手势打架
   bool dragToDismiss = false,
   bool showGrip = false,
-  bool wrapInGlass = true,
+  // 对话框默认**不套玻璃盒**：Dialog 内部的 Align 会撑满可用高度，而玻璃盒又要按
+  // 子树收缩，两者天生冲突（结果是玻璃盒被撑到 90% 屏高、内容居中、按钮被裁）。
+  // 让对话框自己的 Material 当那唯一一个面即可（走 app 的 dialogTheme）。
+  bool wrapInGlass = false,
   bool bottomAligned = false,
   bool pointerDrag = false,
   double? maxWidth,
@@ -187,10 +190,11 @@ class MiuixOverlayHostState<T> extends State<MiuixOverlayHost<T>>
 
     Widget content = widget.builder(context);
 
-    // 玻璃盒本身就是唯一的面板。AlertDialog（以及任何 Material 对话框）自带一层
-    // 不透明表面 + elevation + insetPadding，套在玻璃盒里就会看到「外面一层模糊框、
-    // 里面一层更小的实心框」两个大小不一的框 —— 这里把它让掉：
-    // 背景透明、无阴影、无内边距，只保留 AlertDialog 自己的内容排版。
+    // 显式开启玻璃时才需要这段：玻璃盒本身就是面板，让掉对话框自带的表面
+    // （背景透明 + 无阴影），避免「外面一层模糊框、里面一层实心框」两个框。
+    //
+    // 注意：**不要**去动 insetPadding 与 shape —— 那会把对话框的排版挤变形
+    // （内容贴边、按钮被玻璃盒裁掉），这也是 3.4.9 的教训。
     if (widget.wrapInGlass) {
       final base = Theme.of(context);
       content = Theme(
@@ -200,10 +204,6 @@ class MiuixOverlayHostState<T> extends State<MiuixOverlayHost<T>>
             elevation: 0,
             shadowColor: Colors.transparent,
             surfaceTintColor: Colors.transparent,
-            insetPadding: EdgeInsets.zero,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero,
-            ),
           ),
         ),
         child: content,
