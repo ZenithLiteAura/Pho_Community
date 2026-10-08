@@ -126,28 +126,34 @@ void main() {
   });
 
   group('公告源配置', () {
-    test('五源齐备且顺序为 raw -> Pages -> github.com -> gcore -> cdn', () {
-      expect(announcementSources.length, 5);
+    test('六源齐备且顺序为 raw -> 自建镜像 -> Pages -> github.com -> gcore -> cdn', () {
+      expect(announcementSources.length, 6);
       expect(announcementSources[0], contains('raw.githubusercontent.com'));
-      expect(announcementSources[1], contains('github.io'));
-      expect(announcementSources[2], contains('github.com/'));
-      expect(announcementSources[3], contains('gcore.jsdelivr.net'));
-      expect(announcementSources[4], contains('cdn.jsdelivr.net'));
-      // 实测：Pages 国内可达且新鲜，必须排在两条 jsDelivr 兜底源之前；
-      // 且 github.com/.../raw 会 302 到被墙的 raw 域名，所以排在 Pages 之后。
+      expect(announcementSources[1], contains('pho.zenithliteaura.site'));
+      expect(announcementSources[2], contains('github.io'));
+      expect(announcementSources[3], contains('github.com/'));
+      expect(announcementSources[4], contains('gcore.jsdelivr.net'));
+      expect(announcementSources[5], contains('cdn.jsdelivr.net'));
+      // 自建镜像（Cloudflare 代理 Pages）与 Pages 内容同源，排前面以便国内先拿到；
+      // github.com/.../raw 会 302 到被墙的 raw 域名；两条 jsDelivr 会停在旧提交，只能兜底。
+      final mirror = announcementSources.indexOf(
+          'https://pho.zenithliteaura.site/announcement.json');
       final pages = announcementSources.indexOf(
           'https://zenithliteaura.github.io/Pho_Community/announcement.json');
       final gcore = announcementSources.indexOf('https://gcore.jsdelivr.net/gh/'
           'ZenithLiteAura/Pho_Community@main/docs/announcement.json');
       final cdn = announcementSources.indexOf('https://cdn.jsdelivr.net/gh/'
           'ZenithLiteAura/Pho_Community@main/docs/announcement.json');
+      expect(mirror, lessThan(pages));
       expect(pages, lessThan(gcore));
       expect(gcore, lessThan(cdn));
-      // 前四条指向仓库里的 docs/ 目录；Pages 选 /docs 作为站点根目录，URL 里没有这一层。
-      for (final i in [0, 2, 3, 4]) {
+      // raw / github.com / 两条 jsDelivr 指向仓库里的 docs/ 目录；
+      // 自建镜像与 Pages 都把 /docs 当站点根，所以 URL 里没有这一层。
+      for (final i in [0, 3, 4, 5]) {
         expect(announcementSources[i], endsWith('/docs/announcement.json'));
       }
       expect(announcementSources[1], endsWith('/announcement.json'));
+      expect(announcementSources[2], endsWith('/announcement.json'));
     });
   });
 }

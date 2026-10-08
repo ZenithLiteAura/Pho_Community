@@ -15,16 +15,20 @@ const String announcementSeenIdsKey = 'announcement_seen_ids';
 ///
 /// 顺序的取舍（实测结论写在每条后面）：
 /// 1. `raw.githubusercontent.com` —— push 即生效，缓存仅 5 分钟，内容最新；国内常被 reset；
-/// 2. GitHub Pages —— 实测在国内可达且内容新鲜（2026-10-07 手机实测 200 / 369ms）；
-/// 3. `github.com/.../raw/main/...` —— 会 302 到 raw 域名，国内同样不可达，故排在 Pages 之后；
-/// 4. `gcore.jsdelivr.net` —— 国内可达性好，但 `@main` 的**分支解析**会被缓存（最长 12 小时），
+/// 2. **自建镜像** `pho.zenithliteaura.site` —— Cloudflare 代理 GitHub Pages，与 Pages 同步，
+///    国内可达性通常更好（2026-10-08 实测根路径与 announcement.json 均 200，与仓库同版本）；
+/// 3. GitHub Pages —— 实测在国内可达且内容新鲜（2026-10-07 手机实测 200 / 369ms）；
+/// 4. `github.com/.../raw/main/...` —— 会 302 到 raw 域名，国内同样不可达，故排在 Pages 之后；
+/// 5. `gcore.jsdelivr.net` —— 国内可达性好，但 `@main` 的**分支解析**会被缓存（最长 12 小时），
 ///    实测会长期停在旧提交，且 purge 清不掉，因此降为兜底；
-/// 5. `cdn.jsdelivr.net` —— 同上，缓存更久。
+/// 6. `cdn.jsdelivr.net` —— 同上，缓存更久。
 ///
 /// 每次启动会**并发**请求全部源，再交给 [selectNewestAnnouncement]：
 /// 优先按 `updatedAt` 取最新的一份，只有在所有源都没带该字段时才退回上面的顺序。
 const List<String> announcementSources = <String>[
   'https://raw.githubusercontent.com/ZenithLiteAura/Pho_Community/main/docs/announcement.json',
+  // 自建镜像：Cloudflare 代理 GitHub Pages，国内可达性通常优于 github.io
+  'https://pho.zenithliteaura.site/announcement.json',
   'https://zenithliteaura.github.io/Pho_Community/announcement.json',
   'https://github.com/ZenithLiteAura/Pho_Community/raw/main/docs/announcement.json',
   'https://gcore.jsdelivr.net/gh/ZenithLiteAura/Pho_Community@main/docs/announcement.json',
