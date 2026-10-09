@@ -1,11 +1,11 @@
 {
-    "name": "Pho 社区版",
-    "short_name": "Pho 社区版",
+    "name": "Pho Next",
+    "short_name": "Pho Next",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Pho Next — 无服务端的照片浏览与同步应用",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

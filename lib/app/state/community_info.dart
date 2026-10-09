@@ -9,10 +9,10 @@ library;
 ///
 /// 必须与 `android/app/src/main/AndroidManifest.xml` 的 `android:label`、
 /// iOS/macOS 的 `CFBundleDisplayName` 保持一致。
-const String communityAppName = 'Pho 社区版';
+const String communityAppName = 'Pho Next';
 
 /// 发行版版本号（与 pubspec.yaml 的 `version` 保持同步）。
-const String communityVersion = '3.4.13';
+const String communityVersion = '3.4.14';
 
 /// 原作者。
 const String originalAuthor = 'fregie';

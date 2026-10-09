@@ -671,7 +671,7 @@ abstract class AppLocalizations {
   /// No description provided for @desktopStorageSettingDesc.
   ///
   /// In en, this message translates to:
-  /// **'Set up network storage to browse the photos you\'ve backed up using Pho'**
+  /// **'Set up network storage to browse the photos you\'ve backed up using Pho Next'**
   String get desktopStorageSettingDesc;
 
   /// No description provided for @zoomIn.
@@ -803,7 +803,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingWelcome.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Pho'**
+  /// **'Welcome to Pho Next'**
   String get onboardingWelcome;
 
   /// No description provided for @onboardingWelcomeDesc.
@@ -863,7 +863,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingPermissionDesc.
   ///
   /// In en, this message translates to:
-  /// **'Pho needs access to your photo library to browse and sync photos'**
+  /// **'Pho Next needs access to your photo library to browse and sync photos'**
   String get onboardingPermissionDesc;
 
   /// No description provided for @onboardingGrantPermission.
@@ -1007,19 +1007,19 @@ abstract class AppLocalizations {
   /// No description provided for @backgroundRefreshDisabledDesc.
   ///
   /// In en, this message translates to:
-  /// **'Background sync cannot be triggered. Please go to Settings -> Pho to enable Background App Refresh, then go to Settings -> General -> Background App Refresh to confirm it\'s enabled globally'**
+  /// **'Background sync cannot be triggered. Please go to Settings -> Pho Next to enable Background App Refresh, then go to Settings -> General -> Background App Refresh to confirm it\'s enabled globally'**
   String get backgroundRefreshDisabledDesc;
 
   /// No description provided for @backgroundRefreshDisabledAction.
   ///
   /// In en, this message translates to:
-  /// **'Open Pho Settings'**
+  /// **'Open Pho Next Settings'**
   String get backgroundRefreshDisabledAction;
 
   /// No description provided for @bgSyncSuccessNotificationTitle.
   ///
   /// In en, this message translates to:
-  /// **'Pho Background Sync'**
+  /// **'Pho Next Background Sync'**
   String get bgSyncSuccessNotificationTitle;
 
   /// No description provided for @bgSyncSuccessNotificationBody.
@@ -1037,7 +1037,7 @@ abstract class AppLocalizations {
   /// No description provided for @bgSyncInProgressNotificationTitle.
   ///
   /// In en, this message translates to:
-  /// **'Pho Syncing…'**
+  /// **'Pho Next Syncing…'**
   String get bgSyncInProgressNotificationTitle;
 
   /// No description provided for @bgSyncInProgressNotificationBody.
@@ -1187,7 +1187,7 @@ abstract class AppLocalizations {
   /// No description provided for @licenseText.
   ///
   /// In en, this message translates to:
-  /// **'MIT License. Pho is an open-source photo sync tool.'**
+  /// **'GPL-3.0 License. Pho Next is an open-source photo sync tool.'**
   String get licenseText;
 
   /// No description provided for @backupToFile.
@@ -1664,47 +1664,29 @@ abstract class AppLocalizations {
   /// **'No expand morph or bloom; overlays just appear (most efficient)'**
   String get motionDescOff;
 
-  /// No description provided for @startupNoticeTitle.
+  /// No description provided for @startupNoticeWelcomeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Copyright & Credits'**
-  String get startupNoticeTitle;
+  /// **'Welcome to Pho Next!'**
+  String get startupNoticeWelcomeTitle;
 
-  /// No description provided for @startupNoticeCopyright.
+  /// No description provided for @startupNoticeWelcomeBody1.
   ///
   /// In en, this message translates to:
-  /// **'Copyright'**
-  String get startupNoticeCopyright;
+  /// **'Pho is a serverless, account-free photo browsing and syncing app — photos are stored in your own storage by directory, supporting multiple backends such as SMB / WebDAV / NFS, and you have full control over your data.'**
+  String get startupNoticeWelcomeBody1;
 
-  /// No description provided for @startupNoticeOriginalAuthor.
+  /// No description provided for @startupNoticeWelcomeBody2.
   ///
   /// In en, this message translates to:
-  /// **'Original author'**
-  String get startupNoticeOriginalAuthor;
+  /// **'This repository is the open source community edition, currently only providing Android APK, welcome to download and experience. If you encounter problems, feel free to open an Issue to give feedback, and you are also welcome to submit suggestions~'**
+  String get startupNoticeWelcomeBody2;
 
-  /// No description provided for @startupNoticeCommunityBuild.
+  /// No description provided for @startupNoticeWelcomeWarning.
   ///
   /// In en, this message translates to:
-  /// **'Community build maintained by'**
-  String get startupNoticeCommunityBuild;
-
-  /// No description provided for @startupNoticeModified.
-  ///
-  /// In en, this message translates to:
-  /// **'This community build modifies the original work'**
-  String get startupNoticeModified;
-
-  /// No description provided for @startupNoticeSupport.
-  ///
-  /// In en, this message translates to:
-  /// **'If this app is useful to you, please star the original author\'s repository or report issues there to support its continued maintenance.'**
-  String get startupNoticeSupport;
-
-  /// No description provided for @startupNoticeLinkHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Original author\'s repository'**
-  String get startupNoticeLinkHint;
+  /// **'⚠️ Remember to back up your photos before trying! You are responsible for the consequences caused by operational errors or lack of backup, thank you for your understanding'**
+  String get startupNoticeWelcomeWarning;
 
   /// No description provided for @startupNoticeSecondsLeft.
   ///

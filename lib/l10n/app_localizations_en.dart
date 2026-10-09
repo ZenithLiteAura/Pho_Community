@@ -301,7 +301,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get desktopStorageSettingDesc =>
-      'Set up network storage to browse the photos you\'ve backed up using Pho';
+      'Set up network storage to browse the photos you\'ve backed up using Pho Next';
 
   @override
   String get zoomIn => 'Zoom in';
@@ -371,7 +371,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get refreshUnsynchronizedPhotos => 'Refresh unsynchronized photos';
 
   @override
-  String get onboardingWelcome => 'Welcome to Pho';
+  String get onboardingWelcome => 'Welcome to Pho Next';
 
   @override
   String get onboardingWelcomeDesc => 'Your serverless photo sync tool';
@@ -404,7 +404,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingPermissionDesc =>
-      'Pho needs access to your photo library to browse and sync photos';
+      'Pho Next needs access to your photo library to browse and sync photos';
 
   @override
   String get onboardingGrantPermission => 'Grant permission';
@@ -485,13 +485,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backgroundRefreshDisabledDesc =>
-      'Background sync cannot be triggered. Please go to Settings -> Pho to enable Background App Refresh, then go to Settings -> General -> Background App Refresh to confirm it\'s enabled globally';
+      'Background sync cannot be triggered. Please go to Settings -> Pho Next to enable Background App Refresh, then go to Settings -> General -> Background App Refresh to confirm it\'s enabled globally';
 
   @override
-  String get backgroundRefreshDisabledAction => 'Open Pho Settings';
+  String get backgroundRefreshDisabledAction => 'Open Pho Next Settings';
 
   @override
-  String get bgSyncSuccessNotificationTitle => 'Pho Background Sync';
+  String get bgSyncSuccessNotificationTitle => 'Pho Next Background Sync';
 
   @override
   String bgSyncSuccessNotificationBody(int count) {
@@ -504,7 +504,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bgSyncInProgressNotificationTitle => 'Pho Syncing…';
+  String get bgSyncInProgressNotificationTitle => 'Pho Next Syncing…';
 
   @override
   String get bgSyncInProgressNotificationBody =>
@@ -585,7 +585,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get licenseText =>
-      'MIT License. Pho is an open-source photo sync tool.';
+      'GPL-3.0 License. Pho Next is an open-source photo sync tool.';
 
   @override
   String get backupToFile => 'Backup';
@@ -836,27 +836,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'No expand morph or bloom; overlays just appear (most efficient)';
 
   @override
-  String get startupNoticeTitle => 'Copyright & Credits';
+  String get startupNoticeWelcomeTitle => 'Welcome to Pho Next!';
 
   @override
-  String get startupNoticeCopyright => 'Copyright';
+  String get startupNoticeWelcomeBody1 =>
+      'Pho is a serverless, account-free photo browsing and syncing app — photos are stored in your own storage by directory, supporting multiple backends such as SMB / WebDAV / NFS, and you have full control over your data.';
 
   @override
-  String get startupNoticeOriginalAuthor => 'Original author';
+  String get startupNoticeWelcomeBody2 =>
+      'This repository is the open source community edition, currently only providing Android APK, welcome to download and experience. If you encounter problems, feel free to open an Issue to give feedback, and you are also welcome to submit suggestions~';
 
   @override
-  String get startupNoticeCommunityBuild => 'Community build maintained by';
-
-  @override
-  String get startupNoticeModified =>
-      'This community build modifies the original work';
-
-  @override
-  String get startupNoticeSupport =>
-      'If this app is useful to you, please star the original author\'s repository or report issues there to support its continued maintenance.';
-
-  @override
-  String get startupNoticeLinkHint => 'Original author\'s repository';
+  String get startupNoticeWelcomeWarning =>
+      '⚠️ Remember to back up your photos before trying! You are responsible for the consequences caused by operational errors or lack of backup, thank you for your understanding';
 
   @override
   String get startupNoticeSecondsLeft => 's until you can close';

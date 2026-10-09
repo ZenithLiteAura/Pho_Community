@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = pho
+PRODUCT_NAME = Pho Next
 
 // The application's bundle identifier
 PRODUCT_BUNDLE_IDENTIFIER = com.ZenithLiteAura.app.pho.community
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Pho 社区版 (社区发行版) — 基于原作者 fregie 的 Pho (GPL-3.0)；社区维护 ZenithLiteAura。
+PRODUCT_COPYRIGHT = © 2026 ZenithLiteAura — Pho Next（开源社区版，GPL-3.0）

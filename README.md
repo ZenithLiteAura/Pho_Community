@@ -2,7 +2,7 @@
 <img src="assets/icon/pho_icon.png" width="150">
 </p>
 <h3 align="center">
-Pho — 无服务端的照片浏览与同步应用
+Pho Next — 无服务端的照片浏览与同步应用
 </h3>
 <p align="center">
   <img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License">

@@ -295,7 +295,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settings => '设置';
 
   @override
-  String get desktopStorageSettingDesc => '设置网络储存来浏览你用Pho备份的照片';
+  String get desktopStorageSettingDesc => '设置网络储存来浏览你用 Pho Next 备份的照片';
 
   @override
   String get zoomIn => '放大视图';
@@ -362,7 +362,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get refreshUnsynchronizedPhotos => '刷新未同步照片';
 
   @override
-  String get onboardingWelcome => '欢迎使用 Pho';
+  String get onboardingWelcome => '欢迎使用 Pho Next';
 
   @override
   String get onboardingWelcomeDesc => '你的无服务端照片同步工具';
@@ -392,7 +392,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingPermissionTitle => '需要相册访问权限';
 
   @override
-  String get onboardingPermissionDesc => 'Pho 需要访问你的相册以浏览和同步照片';
+  String get onboardingPermissionDesc => 'Pho Next 需要访问你的相册以浏览和同步照片';
 
   @override
   String get onboardingGrantPermission => '授予权限';
@@ -471,13 +471,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get backgroundRefreshDisabledDesc =>
-      '后台同步将无法触发。请到 设置 -> Pho 开启后台 App 刷新，再到 设置 -> 通用 -> 后台 App 刷新 确认全局开启';
+      '后台同步将无法触发。请到 设置 -> Pho Next 开启后台 App 刷新，再到 设置 -> 通用 -> 后台 App 刷新 确认全局开启';
 
   @override
-  String get backgroundRefreshDisabledAction => '打开 Pho 设置';
+  String get backgroundRefreshDisabledAction => '打开 Pho Next 设置';
 
   @override
-  String get bgSyncSuccessNotificationTitle => 'Pho 后台同步';
+  String get bgSyncSuccessNotificationTitle => 'Pho Next 后台同步';
 
   @override
   String bgSyncSuccessNotificationBody(int count) {
@@ -490,7 +490,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get bgSyncInProgressNotificationTitle => 'Pho 同步中…';
+  String get bgSyncInProgressNotificationTitle => 'Pho Next 同步中…';
 
   @override
   String get bgSyncInProgressNotificationBody => '正在后台同步照片';
@@ -566,7 +566,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appLicense => '开源许可';
 
   @override
-  String get licenseText => 'MIT 许可证。Pho 是开源的相片同步工具。';
+  String get licenseText => 'GPL-3.0 许可证。Pho Next 是开源的相片同步工具。';
 
   @override
   String get backupToFile => '备份';
@@ -806,26 +806,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get motionDescOff => '不做展开形变与凝光，浮层直接出现（最省电）';
 
   @override
-  String get startupNoticeTitle => '版权与致谢';
+  String get startupNoticeWelcomeTitle => '欢迎使用 Pho Next！';
 
   @override
-  String get startupNoticeCopyright => '版权所有';
+  String get startupNoticeWelcomeBody1 =>
+      'Pho 是一个无服务端、无账号的照片浏览与同步应用——照片按目录存放在你自己的存储里，支持 SMB / WebDAV / NFS 等多种后端，数据完全由你掌控。';
 
   @override
-  String get startupNoticeOriginalAuthor => '原作者';
+  String get startupNoticeWelcomeBody2 =>
+      '本仓库为开源社区版，目前仅提供 Android APK，欢迎下载体验。遇到问题欢迎开 Issue 反馈，也欢迎提建议～';
 
   @override
-  String get startupNoticeCommunityBuild => '社区发行版维护';
-
-  @override
-  String get startupNoticeModified => '本版本为社区发行版，已对原作品做出修改';
-
-  @override
-  String get startupNoticeSupport =>
-      '如果这个应用对你有帮助，建议前往原作者仓库 Star 或反馈问题，支持原作者继续维护。';
-
-  @override
-  String get startupNoticeLinkHint => '原作者仓库';
+  String get startupNoticeWelcomeWarning =>
+      '⚠️ 试用前请记得先备份照片！因操作失误或未备份造成的后果需自行承担，感谢理解';
 
   @override
   String get startupNoticeSecondsLeft => '秒后可关闭';
@@ -855,7 +848,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get disableStartupNotice => '关闭启动前弹窗';
 
   @override
-  String get disableStartupNoticeDesc => '关闭后，从下次启动起不再显示版权弹窗';
+  String get disableStartupNoticeDesc => '关闭后，从下次启动起不再显示启动提示';
 
   @override
   String get checkForUpdate => '检查更新';

@@ -39,9 +39,11 @@ void main() {
     expect(closeButton(tester).onPressed, isNull,
         reason: '倒计时结束前关闭按钮必须处于禁用状态');
 
-    // 弹窗内展示原作者与仓库链接
-    expect(find.text(originalAuthor), findsOneWidget);
-    expect(find.text(originalAuthorRepo), findsOneWidget);
+    // 弹窗内容是欢迎与试用提示；版权/原作者信息只在「关于」页，弹窗里不再出现
+    expect(find.textContaining('欢迎使用 Pho Next'), findsOneWidget);
+    expect(find.textContaining('先备份照片'), findsOneWidget);
+    expect(find.text(originalAuthor), findsNothing,
+        reason: '原作者信息只保留在「关于」页一处');
 
     // 弹窗内直接给出「如何关闭它」的指引，用户不用去猜设置在哪一层
     expect(find.textContaining('关闭启动前弹窗'), findsOneWidget);

@@ -2,7 +2,7 @@
 <img src="assets/icon/pho_icon.png" width="150">
 </p>
 <h3 align="center">
-Pho — a serverless photo browser and sync app
+Pho Next — a serverless photo browser and sync app
 </h3>
 <p align="center">
   <img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License">

@@ -2,13 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:img_syncer/app/state/community_info.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
 import 'package:img_syncer/l10n/app_localizations.dart';
 
-/// 启动前版权弹窗的锁定秒数：倒计时结束前无法关闭。
+/// 启动前弹窗的锁定秒数：倒计时结束前无法关闭。
 const int startupNoticeLockSeconds = 10;
 
 /// 进程内是否已经弹过（同一进程只弹一次）。
@@ -21,14 +20,14 @@ void resetStartupNoticeShownForTest() {
 }
 
 /// 冷启动时调用：若用户未在「设置 → 关于 → 高级设置」中关闭启动前弹窗，
-/// 则弹出版权与致谢声明。
+/// 则弹出欢迎与试用提示。
 ///
 /// 行为约定：
 /// - 每次**冷启动**都会弹出（除非用户已关闭该开关）；
 /// - 同一进程内只弹一次；
 /// - 弹窗在 [startupNoticeLockSeconds] 秒内无法关闭（遮罩、返回键、按钮全部屏蔽）。
 ///
-/// SharedPreferences 读取失败时保守按「显示」处理，保证版权声明不会因异常被静默跳过。
+/// SharedPreferences 读取失败时保守按「显示」处理，保证这条提示不会因异常被静默跳过。
 Future<void> showStartupNoticeIfNeeded(BuildContext context) async {
   if (_shownThisLaunch) return;
   _shownThisLaunch = true;
@@ -49,10 +48,11 @@ Future<void> showStartupNoticeIfNeeded(BuildContext context) async {
   );
 }
 
-/// 启动版权与致谢弹窗。
+/// 启动欢迎弹窗。
 ///
-/// 声明版权、原作者、社区发行版信息以及「已对原作品做出修改」，
-/// 并建议用户前往原作者仓库支持原作者。
+/// 内容 = 产品简介 + 发行渠道说明 + 「试用前先备份」的免责声明；
+/// 版权与原作者信息统一放在「设置 → 应用信息（关于）」页，弹窗里不再重复，
+/// 因此这里也不再需要外链。
 class StartupNoticeDialog extends StatefulWidget {
   const StartupNoticeDialog({Key? key}) : super(key: key);
 
@@ -94,17 +94,6 @@ class _StartupNoticeDialogState extends State<StartupNoticeDialog> {
 
   bool get _canClose => _remain <= 0;
 
-  Future<void> _openAuthorRepo() async {
-    try {
-      await launchUrl(
-        Uri.parse(originalAuthorRepo),
-        mode: LaunchMode.externalApplication,
-      );
-    } catch (_) {
-      // 无浏览器或无法打开时忽略：地址本身在弹窗中可选中复制。
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -117,9 +106,9 @@ class _StartupNoticeDialogState extends State<StartupNoticeDialog> {
       child: AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.copyright_outlined, color: colorScheme.primary),
+            Icon(Icons.waving_hand_outlined, color: colorScheme.primary),
             const SizedBox(width: AppSpacing.sm),
-            Expanded(child: Text(l10n.startupNoticeTitle)),
+            Expanded(child: Text(l10n.startupNoticeWelcomeTitle)),
           ],
         ),
         content: SingleChildScrollView(
@@ -127,39 +116,23 @@ class _StartupNoticeDialogState extends State<StartupNoticeDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              _infoLine(textTheme, colorScheme,
-                  l10n.startupNoticeCopyright, '© 2026 $originalAuthor'),
-              _infoLine(textTheme, colorScheme, l10n.startupNoticeOriginalAuthor,
-                  originalAuthor),
-              _infoLine(textTheme, colorScheme, l10n.startupNoticeCommunityBuild,
-                  communityMaintainer),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                '${l10n.startupNoticeModified}（$communityModifiedDate）',
-                style: textTheme.bodySmall
-                    ?.copyWith(color: colorScheme.onSurfaceVariant),
-              ),
+              Text(l10n.startupNoticeWelcomeBody1, style: textTheme.bodyMedium),
+              const SizedBox(height: AppSpacing.sm),
+              Text(l10n.startupNoticeWelcomeBody2, style: textTheme.bodyMedium),
               const SizedBox(height: AppSpacing.md),
-              Text(l10n.startupNoticeSupport, style: textTheme.bodyMedium),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                l10n.startupNoticeLinkHint,
-                style: textTheme.labelSmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                  letterSpacing: 0.6,
+              // 免责声明单独框一下，避免被当成普通正文略过。
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                decoration: BoxDecoration(
+                  color: colorScheme.errorContainer.withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(AppRadius.small),
                 ),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              SelectableText(
-                originalAuthorRepo,
-                style: textTheme.bodySmall?.copyWith(color: colorScheme.primary),
-              ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton.icon(
-                  onPressed: _openAuthorRepo,
-                  icon: const Icon(Icons.open_in_new, size: 18),
-                  label: Text(l10n.openInBrowser),
+                child: Text(
+                  l10n.startupNoticeWelcomeWarning,
+                  style: textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onErrorContainer,
+                  ),
                 ),
               ),
               const Divider(height: AppSpacing.lg),
@@ -191,30 +164,6 @@ class _StartupNoticeDialogState extends State<StartupNoticeDialog> {
             onPressed: _canClose ? () => Navigator.of(context).pop() : null,
             child: Text(l10n.startupNoticeClose),
           ),
-        ],
-      ),
-    );
-  }
-
-  /// 「标签 + 值」一行，标签用弱化颜色，值用正文色。
-  Widget _infoLine(
-    TextTheme textTheme,
-    ColorScheme colorScheme,
-    String label,
-    String value,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: textTheme.bodyMedium
-                ?.copyWith(color: colorScheme.onSurfaceVariant),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(child: Text(value, style: textTheme.bodyMedium)),
         ],
       ),
     );

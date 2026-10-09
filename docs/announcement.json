@@ -1,11 +1,11 @@
 {
   "enabled": true,
   "id": "notice-2026-0005",
-  "updatedAt": "2026-10-08T08:55:03.238765Z",
+  "updatedAt": "2026-10-09T06:10:00.000000Z",
   "level": "critical",
   "title": {
-    "zh": "欢迎使用 Pho 社区版！",
-    "en": "Welcome to Pho Community Edition!"
+    "zh": "欢迎使用 Pho Next！",
+    "en": "Welcome to Pho Next!"
   },
   "body": {
     "zh": "Pho 是一个无服务端、无账号的照片浏览与同步应用——照片按目录存放在你自己的存储里，支持 SMB / WebDAV / NFS 等多种后端，数据完全由你掌控。\n本仓库为开源社区版，目前仅提供 Android APK，欢迎下载体验。\n遇到问题欢迎开 Issue 反馈，也欢迎提建议～\n⚠️ 试用前请记得先备份照片！ 因操作失误或未备份造成的后果需自行承担，感谢理解",
