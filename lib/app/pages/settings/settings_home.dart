@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import 'package:img_syncer/app/state/global.dart';
 import 'package:img_syncer/app/theme/design_tokens.dart';
@@ -7,7 +7,6 @@ import 'package:img_syncer/app/pages/settings/settings_storage.dart';
 import 'package:img_syncer/app/pages/settings/settings_notifications.dart';
 import 'package:img_syncer/app/pages/settings/settings_appearance.dart';
 import 'package:img_syncer/app/pages/settings/settings_about.dart';
-import 'package:img_syncer/app/pages/settings/settings_log_collector.dart';
 
 /// 一级设置页：设置分类入口。
 /// 主题风格等具体设置统一放在对应二级页中，避免重复入口。
@@ -53,12 +52,8 @@ class SettingsHome extends StatelessWidget {
                   title: l10n.appearanceAndTheme,
                   onTap: () => _push(context, const SettingsAppearancePage()),
                 ),
-                _tile(
-                  context,
-                  icon: Icons.receipt_long_outlined,
-                  title: l10n.logAndDiagnostics,
-                  onTap: () => _push(context, const SettingsLogCollectorPage()),
-                ),
+                // 注：「日志与诊断」已移到「应用信息」二级页（入口见 settings_about.dart），
+                // 一级列表因此从 6 项减到 5 项。
                 _tile(
                   context,
                   icon: Icons.info_outline,

@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:img_syncer/app/pages/settings/settings_advanced.dart';
 import 'package:img_syncer/app/pages/settings/settings_developer.dart';
+import 'package:img_syncer/app/pages/settings/settings_log_collector.dart';
 import 'package:img_syncer/app/state/community_info.dart';
 import 'package:img_syncer/app/state/developer_mode.dart';
 import 'package:img_syncer/app/state/global.dart';
@@ -245,6 +246,23 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
                           color: colorScheme.onSurfaceVariant,
                         ),
                   onTap: _checking ? null : _checkUpdate,
+                ),
+                const Divider(height: 1),
+                // 「日志与诊断」从一级设置页挪到这里：一级列表少一项，
+                // 小屏/特殊分辨率下不会再被截断，同时它本来也属于「应用信息」范畴。
+                ListTile(
+                  leading: const Icon(Icons.receipt_long_outlined, size: 26),
+                  title: Text(l10n.logAndDiagnostics),
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsLogCollectorPage(),
+                    ),
+                  ),
                 ),
                 const Divider(height: 1),
                 ListTile(
