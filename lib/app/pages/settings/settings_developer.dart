@@ -110,8 +110,6 @@ class _SettingsDeveloperPageState extends State<SettingsDeveloperPage> {
               prefs.getBool(startupNoticePrefKey) ?? false,
           updateCheckDisabled:
               prefs.getBool(autoUpdateCheckPrefKey) ?? false,
-          announcementCheckDisabled:
-              prefs.getBool(announcementCheckPrefKey) ?? false,
         );
         if (!mounted) return;
         setState(() => _diagnostics = text);

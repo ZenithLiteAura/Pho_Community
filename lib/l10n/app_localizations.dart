@@ -1862,18 +1862,6 @@ abstract class AppLocalizations {
   /// **'Got it'**
   String get announcementOk;
 
-  /// No description provided for @announcementCheck.
-  ///
-  /// In en, this message translates to:
-  /// **'Check announcements at startup'**
-  String get announcementCheck;
-
-  /// No description provided for @announcementCheckDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Reads the latest announcement from GitHub at startup (uses no GitHub API quota)'**
-  String get announcementCheckDesc;
-
   /// No description provided for @startupNoticeHowToDisable.
   ///
   /// In en, this message translates to:

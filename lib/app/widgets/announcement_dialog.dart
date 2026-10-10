@@ -9,17 +9,11 @@ import 'package:img_syncer/l10n/app_localizations.dart';
 
 /// 启动时检查应用内公告。
 ///
-/// 全程静默失败（网络不通、源 404、JSON 非法、用户已关闭该功能都直接返回）；
+/// **没有开关，固定开启** —— 公告是与用户沟通的渠道，必须能到达。
+/// 全程静默失败（网络不通、源 404、JSON 非法都直接返回）；
 /// 只有同时满足「enabled=true + 生效窗口内 + 版本区间内 + 该 id 未读」时才弹窗。
 Future<void> autoCheckAnnouncementAndNotify(BuildContext context) async {
-  var disabled = false;
-  try {
-    final prefs = await SharedPreferences.getInstance();
-    disabled = prefs.getBool(announcementCheckPrefKey) ?? false;
-  } catch (_) {
-    disabled = false;
-  }
-  if (disabled || !context.mounted) return;
+  if (!context.mounted) return;
 
   final announcement = await fetchAnnouncement();
   if (announcement == null || !context.mounted) return;

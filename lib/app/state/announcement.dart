@@ -5,9 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:img_syncer/app/state/update_checker.dart' show extractVersion;
 import 'package:img_syncer/core/net/text_fetch.dart';
 
-/// 「启动时检查公告」的持久化 key（`false` = 默认开启）。
-const String announcementCheckPrefKey = 'announcement_check_disabled';
-
 /// 已读公告 id 的持久化 key（逗号分隔，只保留最近若干条）。
 const String announcementSeenIdsKey = 'announcement_seen_ids';
 

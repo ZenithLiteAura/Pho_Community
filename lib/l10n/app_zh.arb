@@ -296,8 +296,6 @@
   "announcementCriticalHint": "该公告为重要提醒，请点击下方按钮确认。",
   "announcementGoTo": "前往查看",
   "announcementOk": "我知道了",
-  "announcementCheck": "启动时检查公告",
-  "announcementCheckDesc": "启动时从 GitHub 读取最新公告，命中就提示（不消耗 GitHub API 额度）",
   "startupNoticeHowToDisable": "不想每次启动都看到？到「设置 → 应用信息 → 高级设置」打开「关闭启动前弹窗」即可。",
   "devOptions": "开发者选项",
   "devOptionsDesc": "仅维护者使用的调试与发布工具",

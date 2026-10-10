@@ -405,7 +405,6 @@ String buildDiagnosticsText({
   required String seenIds,
   required bool startupNoticeDisabled,
   required bool updateCheckDisabled,
-  required bool announcementCheckDisabled,
 }) {
   final b = StringBuffer();
   b.writeln('$communityAppName $communityVersion');
@@ -415,7 +414,7 @@ String buildDiagnosticsText({
   b.writeln('公告文件：$phoAnnouncementPath');
   b.writeln('');
   b.writeln('开关：关闭启动弹窗=$startupNoticeDisabled，'
-      '关闭自动检查更新=$updateCheckDisabled，关闭公告检查=$announcementCheckDisabled');
+      '关闭自动检查更新=$updateCheckDisabled（公告检查固定开启，无开关）');
   b.writeln('已读公告 id：${seenIds.isEmpty ? '（无）' : seenIds}');
   b.writeln('');
   for (final p in probes) {

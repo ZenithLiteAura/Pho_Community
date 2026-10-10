@@ -942,13 +942,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get announcementOk => 'Got it';
 
   @override
-  String get announcementCheck => 'Check announcements at startup';
-
-  @override
-  String get announcementCheckDesc =>
-      'Reads the latest announcement from GitHub at startup (uses no GitHub API quota)';
-
-  @override
   String get startupNoticeHowToDisable =>
       'Don\'t want to see this on every launch? Go to Settings → About → Advanced settings and turn on \"Disable startup notice\".';
 
